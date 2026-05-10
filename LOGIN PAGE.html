@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Hunter TV — Sign In / Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090F;--surface:#0D1017;--card:#111622;--border:#1C2238;--border2:#242C44;
+  --accent:#00D4AA;--accent-dim:rgba(0,212,170,.1);
+  --purple:#6C47FF;--orange:#FF5722;--live:#FF3355;
+  --text:#E8EBF5;--muted:#5A6282;
+}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow:hidden;
+  display:flex;
+}
+
+/* ── ANIMATED BG ── */
+.bg-canvas{
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 50%, rgba(0,212,170,.08) 0%, transparent 50%),
+             radial-gradient(ellipse at 80% 20%, rgba(108,71,255,.1) 0%, transparent 50%),
+             radial-gradient(ellipse at 60% 80%, rgba(255,87,34,.06) 0%, transparent 50%),
+             var(--bg);
+  z-index:0;
+}
+.grid-lines{
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,170,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,170,.04) 1px, transparent 1px);
+  background-size:60px 60px;
+  z-index:0;
+  animation:gridshift 20s linear infinite;
+}
+@keyframes gridshift{0%{background-position:0 0}100%{background-position:60px 60px}}
+.orb1{position:fixed;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,170,.06) 0%,transparent 70%);top:-100px;left:-100px;animation:float1 12s ease-in-out infinite;z-index:0}
+.orb2{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(108,71,255,.07) 0%,transparent 70%);bottom:-150px;right:-150px;animation:float2 15s ease-in-out infinite;z-index:0}
+.orb3{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,87,34,.05) 0%,transparent 70%);top:40%;right:20%;animation:float3 10s ease-in-out infinite;z-index:0}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,-40px)}}
+@keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-30px)}}
+
+/* ── SPLIT LAYOUT ── */
+.left-panel{
+  flex:1;display:flex;flex-direction:column;
+  justify-content:center;padding:60px;
+  position:relative;z-index:1;
+  min-height:100vh;
+}
+.right-panel{
+  width:480px;flex-shrink:0;
+  background:rgba(13,16,23,.97);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  justify-content:center;
+  padding:40px;
+  position:relative;z-index:1;
+  overflow-y:auto;
+  max-height:100vh;
+}
+
+/* ── LEFT CONTENT ── */
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:56px}
+.brand-mark{
+  width:46px;height:46px;background:var(--accent);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+}
+.brand-mark svg{width:26px;height:26px;fill:var(--bg)}
+.brand-name{
+  font-family:'Orbitron',sans-serif;
+  font-size:14px;font-weight:800;
+  letter-spacing:2.5px;color:var(--accent);
+}
+.brand-sub{font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:2px}
+
+.hero-headline{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(28px,3vw,44px);
+  font-weight:800;line-height:1.15;
+  color:var(--text);margin-bottom:18px;
+}
+.hero-headline .hl{color:var(--accent)}
+.hero-sub{
+  font-size:16px;color:var(--muted);
+  line-height:1.7;max-width:480px;margin-bottom:40px;
+}
+
+/* FEATURE PILLS */
+.features{display:flex;flex-direction:column;gap:14px;margin-bottom:48px}
+.feat{display:flex;align-items:center;gap:14px}
+.feat-icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;border:1px solid;
+}
+.feat-icon svg{width:19px;height:19px}
+.fi-green{background:rgba(0,212,170,.1);border-color:rgba(0,212,170,.2)}
+.fi-green svg{stroke:var(--accent);fill:none}
+.fi-purple{background:rgba(108,71,255,.1);border-color:rgba(108,71,255,.2)}
+.fi-purple svg{stroke:var(--purple);fill:none}
+.fi-orange{background:rgba(255,87,34,.1);border-color:rgba(255,87,34,.2)}
+.fi-orange svg{stroke:var(--orange);fill:none}
+.fi-live{background:rgba(255,51,85,.1);border-color:rgba(255,51,85,.2)}
+.fi-live svg{stroke:var(--live);fill:none}
+.feat-text .ft-title{font-size:14px;font-weight:600;margin-bottom:2px}
+.feat-text .ft-sub{font-size:12px;color:var(--muted)}
+
+/* CHANNEL PREVIEW STRIP */
+.preview-strip{
+  display:flex;gap:10px;
+  position:relative;
+}
+.preview-strip::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;width:80px;
+  background:linear-gradient(to right,transparent,var(--bg));pointer-events:none;
+}
+.pv-card{
+  flex:0 0 110px;border-radius:10px;overflow:hidden;
+  border:1px solid var(--border);cursor:pointer;
+  transition:transform .2s,border-color .2s;
+}
+.pv-card:hover{transform:scale(1.04);border-color:var(--accent)}
+.pv-img{height:64px;overflow:hidden;position:relative}
+.pv-img img{width:100%;height:100%;object-fit:cover}
+.pv-live{
+  position:absolute;top:5px;right:5px;
+  background:var(--live);color:#fff;
+  font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;
+  display:flex;align-items:center;gap:3px;
+}
+.pv-dot{width:4px;height:4px;background:#fff;border-radius:50%;animation:blink 1.3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.pv-body{background:var(--card);padding:7px 8px}
+.pv-name{font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-genre{font-size:9px;color:var(--muted)}
+
+/* ── RIGHT PANEL FORM ── */
+.form-header{margin-bottom:28px}
+.form-toggle{
+  display:flex;background:var(--card);
+  border:1px solid var(--border);border-radius:10px;
+  padding:4px;margin-bottom:28px;gap:4px;
+}
+.ft-btn{
+  flex:1;padding:9px;text-align:center;
+  font-size:13px;font-weight:600;cursor:pointer;
+  border-radius:7px;transition:all .2s;color:var(--muted);
+}
+.ft-btn.on{background:var(--accent);color:var(--bg)}
+
+.form-title{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;margin-bottom:5px}
+.form-sub{font-size:13px;color:var(--muted)}
+
+/* SOCIAL BUTTONS */
+.social-btns{display:flex;gap:10px;margin-bottom:22px}
+.soc-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--card);border:1px solid var(--border);
+  color:var(--text);font-size:12px;font-weight:500;
+  padding:10px;border-radius:9px;cursor:pointer;
+  transition:border-color .15s;
+}
+.soc-btn:hover{border-color:var(--accent)}
+.soc-btn svg{width:16px;height:16px;flex-shrink:0}
+
+.divider-row{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.div-line{flex:1;height:1px;background:var(--border)}
+.div-text{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* FORM FIELDS */
+.field{margin-bottom:16px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.field-wrap{position:relative}
+.field-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--muted);fill:none;pointer-events:none;transition:stroke .15s}
+.field input{
+  width:100%;background:var(--card);
+  border:1px solid var(--border);border-radius:9px;
+  padding:11px 40px 11px 40px;
+  color:var(--text);font-size:14px;outline:none;
+  font-family:'DM Sans',sans-serif;
+  transition:border-color .15s;
+}
+.field input:focus{border-color:var(--accent)}
+.field input:focus + .field-wrap svg,
+.field-wrap:focus-within svg{stroke:var(--accent)}
+.field input::placeholder{color:var(--muted)}
+.field input.error{border-color:var(--live)}
+.field .err-msg{font-size:11px;color:var(--live);margin-top:5px;display:none}
+.field input.error ~ .err-msg{display:block}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;width:18px;height:18px}
+.eye-btn svg{width:100%;height:100%;stroke:var(--muted);fill:none;transition:stroke .15s}
+.eye-btn:hover svg{stroke:var(--accent)}
+
+/* PASSWORD STRENGTH */
+.pw-strength{margin-top:8px}
+.pw-bars{display:flex;gap:4px;margin-bottom:5px}
+.pw-bar{flex:1;height:3px;background:var(--border2);border-radius:2px;transition:background .3s}
+.pw-bar.weak{background:var(--live)}
+.pw-bar.fair{background:var(--orange)}
+.pw-bar.good{background:#EF9F27}
+.pw-bar.strong{background:var(--accent)}
+.pw-label{font-size:10px;color:var(--muted)}
+
+/* PLAN SELECTOR */
+.plan-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.ps-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:9px;padding:10px 8px;cursor:pointer;
+  transition:all .18s;text-align:center;
+}
+.ps-card:hover{border-color:var(--accent)}
+.ps-card.on{background:rgba(0,212,170,.08);border-color:var(--accent)}
+.ps-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px}
+.ps-price{font-size:13px;font-weight:700;color:var(--accent)}
+.ps-price span{font-size:9px;font-weight:400;color:var(--muted)}
+.ps-tag{font-size:9px;color:var(--muted);margin-top:2px}
+
+/* CHECKBOX */
+.check-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:14px;cursor:pointer}
+.check-box{
+  width:18px;height:18px;border:1.5px solid var(--border2);
+  border-radius:5px;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;cursor:pointer;background:var(--card);
+}
+.check-box.on{background:var(--accent);border-color:var(--accent)}
+.check-box svg{width:10px;height:10px;stroke:var(--bg);fill:none;stroke-width:2.5;opacity:0}
+.check-box.on svg{opacity:1}
+.check-label{font-size:12px;color:var(--muted);line-height:1.5}
+.check-label a{color:var(--accent);text-decoration:none}
+.check-label a:hover{text-decoration:underline}
+
+/* SUBMIT */
+.submit-btn{
+  width:100%;background:var(--accent);color:var(--bg);
+  padding:13px;border-radius:10px;
+  font-size:14px;font-weight:700;cursor:pointer;
+  border:none;font-family:'DM Sans',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  transition:opacity .15s,transform .1s;
+  margin-bottom:18px;
+  position:relative;overflow:hidden;
+}
+.submit-btn:hover{opacity:.88}
+.submit-btn:active{transform:scale(.98)}
+.submit-btn svg{width:16px;height:16px;stroke:var(--bg);fill:none;stroke-width:2.5}
+.submit-btn .btn-shimmer{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.18) 50%,transparent 100%);
+  transform:translateX(-100%);
+  animation:shimmer 2.5s infinite 1s;
+}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+
+.form-footer{text-align:center;font-size:13px;color:var(--muted)}
+.form-footer a{color:var(--accent);cursor:pointer;font-weight:500;text-decoration:none}
+.form-footer a:hover{text-decoration:underline}
+
+/* FORGOT PASSWORD */
+.forgot-row{display:flex;justify-content:flex-end;margin-top:-8px;margin-bottom:14px}
+.forgot-link{font-size:12px;color:var(--accent);cursor:pointer;transition:opacity .15s}
+.forgot-link:hover{opacity:.7}
+
+/* SUCCESS STATE */
+.success-state{
+  text-align:center;padding:20px 0;
+  display:none;
+}
+.success-icon{
+  width:72px;height:72px;
+  background:rgba(0,212,170,.1);border:2px solid var(--accent);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;
+  animation:pop .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.success-icon svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2.5}
+.success-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;margin-bottom:7px}
+.success-sub{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.goto-btn{
+  background:var(--accent);color:var(--bg);
+  padding:12px 28px;border-radius:9px;
+  font-size:14px;font-weight:700;cursor:pointer;border:none;
+  font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:8px;
+  transition:opacity .15s;text-decoration:none;
+}
+.goto-btn:hover{opacity:.85}
+.goto-btn svg{width:15px;height:15px;stroke:var(--bg);fill:none;stroke-width:2.5}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:11px 22px;border-radius:10px;
+  font-size:13px;font-weight:500;opacity:0;
+  transition:all .3s;pointer-events:none;z-index:999;
+  display:flex;align-items:center;gap:9px;white-space:nowrap;
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast svg{width:15px;height:15px;flex-shrink:0}
+#toast.t-ok{border-color:rgba(0,212,170,.3);color:var(--accent)}
+#toast.t-ok svg{stroke:var(--accent);fill:none}
+#toast.t-err{border-color:rgba(255,51,85,.3);color:var(--live)}
+#toast.t-err svg{stroke:var(--live);fill:none}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  body{flex-direction:column;overflow:auto}
+  .left-panel{display:none}
+  .right-panel{width:100%;max-height:none;min-height:100vh;justify-content:flex-start;padding:32px 24px 40px}
+  .bg-canvas,.grid-lines,.orb1,.orb2,.orb3{display:block}
+}
+@media(max-width:400px){
+  .field-row{grid-template-columns:1fr}
+  .social-btns{flex-direction:column}
+  .plan-selector{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ANIMATED BACKGROUND -->
+<div class="bg-canvas"></div>
+<div class="grid-lines"></div>
+<div class="orb1"></div>
+<div class="orb2"></div>
+<div class="orb3"></div>
+
+<!-- ── LEFT PANEL ── -->
+<div class="left-panel">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 20 20"><path d="M2 5h16v2L10 11.5 2 7V5zm0 4.5l8 4.5 8-4.5V17H2z"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">CYBER HUNTER TV</div>
+      <div class="brand-sub">450+ CHANNELS · HD & 4K</div>
+    </div>
+  </div>
+
+  <div class="hero-headline">
+    Africa's Premier<br>
+    <span class="hl">Live TV</span> Platform.<br>
+    Stream Everything.
+  </div>
+  <div class="hero-sub">
+    Watch live football, news, movies, kids TV and more — in stunning HD and 4K. One subscription. Every screen. Any time.
+  </div>
+
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon fi-green">
+        <svg viewBox="0 0 18 18"><rect x="1" y="2" width="16" height="12" rx="2"/><path d="M6 7l5 3-5 3V7z" fill="currentColor" opacity=".8"/></svg>
+      </div>
+      <div class="feat-text">
+        <div class="ft-title">450+ Live Channels</div>
+        <div class="ft-sub">Sports, News, Movies, Entertainment, Kids & more</div>
+      </div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon fi-purple">
+        <svg viewBox="0 0 18 18"><rect x="1" y="1" width="7" height="7" rx="1.5"/><rect x="10" y="1" width="7" height="7" rx="1.5"/><rect x="1" y="10" width="7" height="7" rx="1.5"/><rect x="10" y="10" width="7" height="7" rx="1.5"/></svg>
+      </div>
+      <div class="feat-text">
+        <div class="ft-title">Multi-View Player</div>
+        <div class="ft-sub">Watch up to 4 channels simultaneously</div>
+      </div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon fi-orange">
+        <svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path d="M9 5v4l3 3" stroke="white" stroke-width="1.5" fill="none"/></svg>
+      </div>
+      <div class="feat-text">
+        <div class="ft-title">Record & Replay</div>
+        <div class="ft-sub">Never miss a match — schedule recordings from anywhere</div>
+      </div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon fi-live">
+        <svg viewBox="0 0 18 18"><path d="M3 9a6 6 0 0 1 12 0"/><path d="M1 9a8 8 0 0 1 16 0"/><circle cx="9" cy="9" r="2"/></svg>
+      </div>
+      <div class="feat-text">
+        <div class="ft-title">Watch on Any Device</div>
+        <div class="ft-sub">Phone, tablet, laptop and Smart TV — all included</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHANNEL PREVIEW STRIP -->
+  <div class="preview-strip">
+    <div class="pv-card">
+      <div class="pv-img"><img src="https://images.unsplash.com/photo-1551958219-acbc6f5e0a7e?w=220&h=128&fit=crop" alt="Football"><div class="pv-live"><span class="pv-dot"></span>LIVE</div></div>
+      <div class="pv-body"><div class="pv-name">SuperSport 3</div><div class="pv-genre">Sports</div></div>
+    </div>
+    <div class="pv-card">
+      <div class="pv-img"><img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=220&h=128&fit=crop" alt="News"><div class="pv-live"><span class="pv-dot"></span>LIVE</div></div>
+      <div class="pv-body"><div class="pv-name">CNN International</div><div class="pv-genre">News</div></div>
+    </div>
+    <div class="pv-card">
+      <div class="pv-img"><img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=220&h=128&fit=crop" alt="Movies"></div>
+      <div class="pv-body"><div class="pv-name">M-Net Movies</div><div class="pv-genre">Movies · 4K</div></div>
+    </div>
+    <div class="pv-card">
+      <div class="pv-img"><img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=220&h=128&fit=crop" alt="Music"><div class="pv-live"><span class="pv-dot"></span>LIVE</div></div>
+      <div class="pv-body"><div class="pv-name">MTV Base</div><div class="pv-genre">Music</div></div>
+    </div>
+    <div class="pv-card">
+      <div class="pv-img"><img src="https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=220&h=128&fit=crop" alt="Nature"></div>
+      <div class="pv-body"><div class="pv-name">BBC Earth</div><div class="pv-genre">Documentary</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── RIGHT PANEL ── -->
+<div class="right-panel">
+
+  <!-- TOGGLE LOGIN / REGISTER -->
+  <div class="form-toggle">
+    <div class="ft-btn on" id="tab-login" onclick="switchMode('login')">Sign In</div>
+    <div class="ft-btn" id="tab-register" onclick="switchMode('register')">Create Account</div>
+  </div>
+
+  <!-- ════ LOGIN FORM ════ -->
+  <div id="form-login">
+    <div class="form-header">
+      <div class="form-title">Welcome back</div>
+      <div class="form-sub">Sign in to continue watching</div>
+    </div>
+
+    <div class="social-btns">
+      <div class="soc-btn" onclick="toast('Google sign-in coming soon','ok')">
+        <svg viewBox="0 0 20 20"><path d="M19.6 10.2c0-.7-.1-1.3-.2-2H10v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z" fill="#4285F4"/><path d="M10 20c2.7 0 5-0.9 6.6-2.5l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H1.1v2.6C2.7 17.8 6.1 20 10 20z" fill="#34A853"/><path d="M4.4 11.9A6 6 0 0 1 4.1 10c0-.7.1-1.3.3-1.9V5.5H1.1A10 10 0 0 0 0 10c0 1.6.4 3.1 1.1 4.5l3.3-2.6z" fill="#FBBC05"/><path d="M10 4c1.5 0 2.8.5 3.8 1.5L16.6 3C15 1.3 12.7 0 10 0 6.1 0 2.7 2.2 1.1 5.5l3.3 2.6C5.2 5.8 7.4 4 10 4z" fill="#EA4335"/></svg>
+        Continue with Google
+      </div>
+      <div class="soc-btn" onclick="toast('Facebook sign-in coming soon','ok')">
+        <svg viewBox="0 0 20 20"><path d="M18 0H2C.9 0 0 .9 0 2v16c0 1.1.9 2 2 2h8v-7H8V9.5h2V7.8c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2.7.2v2.1h-1.4c-1 0-1.2.5-1.2 1.2v1.4h2.4l-.4 3H13V20h5c1.1 0 2-.9 2-2V2c0-1.1-.9-2-2-2z" fill="#1877F2"/></svg>
+        Facebook
+      </div>
+    </div>
+
+    <div class="divider-row">
+      <div class="div-line"></div>
+      <div class="div-text">or sign in with email</div>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <div class="field-wrap">
+        <svg viewBox="0 0 18 18"><rect x="1" y="3" width="16" height="12" rx="2"/><path d="M1 6l8 5.5L17 6"/></svg>
+        <input type="email" id="l-email" placeholder="you@example.com" oninput="clearErr(this)">
+        <span class="err-msg">Please enter a valid email</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <div class="field-wrap">
+        <svg viewBox="0 0 18 18"><rect x="3" y="8" width="12" height="9" rx="1.5"/><path d="M6 8V5.5a3 3 0 0 1 6 0V8"/></svg>
+        <input type="password" id="l-password" placeholder="Enter your password" oninput="clearErr(this)">
+        <div class="eye-btn" onclick="togglePw('l-password',this)">
+          <svg viewBox="0 0 18 18" id="l-eye"><path d="M1 9s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z"/><circle cx="9" cy="9" r="2.5"/></svg>
+        </div>
+        <span class="err-msg">Password is required</span>
+      </div>
+    </div>
+
+    <div class="forgot-row">
+      <div class="forgot-link" onclick="showForgot()">Forgot password?</div>
+    </div>
+
+    <div class="check-row" onclick="toggleCheck(this)">
+      <div class="check-box on"><svg viewBox="0 0 10 10"><path d="M2 5l2.5 2.5L8 3"/></svg></div>
+      <div class="check-label">Keep me signed in on this device</div>
+    </div>
+
+    <button class="submit-btn" onclick="handleLogin()">
+      <div class="btn-shimmer"></div>
+      <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      Sign In to Cyber Hunter TV
+    </button>
+
+    <div class="form-footer">
+      Don't have an account? <a onclick="switchMode('register')">Create one free →</a>
+    </div>
+  </div>
+
+  <!-- ════ REGISTER FORM ════ -->
+  <div id="form-register" style="display:none">
+    <div class="form-header">
+      <div class="form-title">Create your account</div>
+      <div class="form-sub">Start your free 7-day trial — no card required</div>
+    </div>
+
+    <div class="social-btns">
+      <div class="soc-btn" onclick="toast('Google sign-up coming soon','ok')">
+        <svg viewBox="0 0 20 20"><path d="M19.6 10.2c0-.7-.1-1.3-.2-2H10v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z" fill="#4285F4"/><path d="M10 20c2.7 0 5-0.9 6.6-2.5l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H1.1v2.6C2.7 17.8 6.1 20 10 20z" fill="#34A853"/><path d="M4.4 11.9A6 6 0 0 1 4.1 10c0-.7.1-1.3.3-1.9V5.5H1.1A10 10 0 0 0 0 10c0 1.6.4 3.1 1.1 4.5l3.3-2.6z" fill="#FBBC05"/><path d="M10 4c1.5 0 2.8.5 3.8 1.5L16.6 3C15 1.3 12.7 0 10 0 6.1 0 2.7 2.2 1.1 5.5l3.3 2.6C5.2 5.8 7.4 4 10 4z" fill="#EA4335"/></svg>
+        Continue with Google
+      </div>
+      <div class="soc-btn" onclick="toast('Facebook sign-up coming soon','ok')">
+        <svg viewBox="0 0 20 20"><path d="M18 0H2C.9 0 0 .9 0 2v16c0 1.1.9 2 2 2h8v-7H8V9.5h2V7.8c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2.7.2v2.1h-1.4c-1 0-1.2.5-1.2 1.2v1.4h2.4l-.4 3H13V20h5c1.1 0 2-.9 2-2V2c0-1.1-.9-2-2-2z" fill="#1877F2"/></svg>
+        Facebook
+      </div>
+    </div>
+
+    <div class="divider-row">
+      <div class="div-line"></div>
+      <div class="div-text">or register with email</div>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>First Name</label>
+        <div class="field-wrap">
+          <svg viewBox="0 0 18 18"><circle cx="9" cy="6" r="4"/><path d="M2 16c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>
+          <input type="text" id="r-fname" placeholder="David" oninput="clearErr(this)">
+        </div>
+      </div>
+      <div class="field">
+        <label>Last Name</label>
+        <div class="field-wrap">
+          <svg viewBox="0 0 18 18"><circle cx="9" cy="6" r="4"/><path d="M2 16c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>
+          <input type="text" id="r-lname" placeholder="Kariuki" oninput="clearErr(this)">
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <div class="field-wrap">
+        <svg viewBox="0 0 18 18"><rect x="1" y="3" width="16" height="12" rx="2"/><path d="M1 6l8 5.5L17 6"/></svg>
+        <input type="email" id="r-email" placeholder="you@example.com" oninput="clearErr(this)">
+        <span class="err-msg">Please enter a valid email address</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Phone Number</label>
+      <div class="field-wrap">
+        <svg viewBox="0 0 18 18"><rect x="5" y="1" width="8" height="16" rx="2"/><circle cx="9" cy="14" r="1" fill="currentColor"/></svg>
+        <input type="tel" id="r-phone" placeholder="+255 712 000 000" oninput="clearErr(this)">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <div class="field-wrap">
+        <svg viewBox="0 0 18 18"><rect x="3" y="8" width="12" height="9" rx="1.5"/><path d="M6 8V5.5a3 3 0 0 1 6 0V8"/></svg>
+        <input type="password" id="r-password" placeholder="Create a strong password" oninput="checkStrength(this.value)">
+        <div class="eye-btn" onclick="togglePw('r-password',this)">
+          <svg viewBox="0 0 18 18"><path d="M1 9s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z"/><circle cx="9" cy="9" r="2.5"/></svg>
+        </div>
+      </div>
+      <div class="pw-strength">
+        <div class="pw-bars">
+          <div class="pw-bar" id="pb1"></div>
+          <div class="pw-bar" id="pb2"></div>
+          <div class="pw-bar" id="pb3"></div>
+          <div class="pw-bar" id="pb4"></div>
+        </div>
+        <div class="pw-label" id="pw-label">Enter a password</div>
+      </div>
+    </div>
+
+    <!-- PLAN SELECTOR -->
+    <div class="field">
+      <label>Choose your plan</label>
+      <div class="plan-selector">
+        <div class="ps-card" onclick="selectPlan(this)">
+          <div class="ps-name">Access</div>
+          <div class="ps-price">$5.99<span>/mo</span></div>
+          <div class="ps-tag">120+ channels</div>
+        </div>
+        <div class="ps-card on" onclick="selectPlan(this)">
+          <div class="ps-name">Compact+</div>
+          <div class="ps-price">$14.99<span>/mo</span></div>
+          <div class="ps-tag">250+ HD channels</div>
+        </div>
+        <div class="ps-card" onclick="selectPlan(this)">
+          <div class="ps-name">Premium</div>
+          <div class="ps-price">$24.99<span>/mo</span></div>
+          <div class="ps-tag">450+ · 4K · Unlimited</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row" onclick="toggleCheck(this)" id="terms-check">
+      <div class="check-box"><svg viewBox="0 0 10 10"><path d="M2 5l2.5 2.5L8 3"/></svg></div>
+      <div class="check-label">I agree to the <a>Terms of Service</a> and <a>Privacy Policy</a></div>
+    </div>
+
+    <div class="check-row" onclick="toggleCheck(this)">
+      <div class="check-box on"><svg viewBox="0 0 10 10"><path d="M2 5l2.5 2.5L8 3"/></svg></div>
+      <div class="check-label">Send me alerts for live sports and new channels</div>
+    </div>
+
+    <button class="submit-btn" onclick="handleRegister()" style="background:linear-gradient(135deg,var(--accent),var(--purple))">
+      <div class="btn-shimmer"></div>
+      <svg viewBox="0 0 16 16"><path d="M8 1v14M1 8h14"/></svg>
+      Create My Account — 7 Days Free
+    </button>
+
+    <div class="form-footer">
+      Already have an account? <a onclick="switchMode('login')">Sign in →</a>
+    </div>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div class="success-state" id="success-state">
+    <div class="success-icon">
+      <svg viewBox="0 0 32 32"><path d="M6 16l6 6L26 8"/></svg>
+    </div>
+    <div class="success-title" id="success-title">Welcome to Cyber Hunter TV!</div>
+    <div class="success-sub" id="success-sub">Your account has been created. Enjoy your 7-day free trial — 450+ channels are waiting for you.</div>
+    <a class="goto-btn" href="cyber-hunter-tv-v2.html">
+      Start Watching
+      <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast">
+  <svg viewBox="0 0 16 16" id="toast-icon"></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+/* ── MODE SWITCH ── */
+function switchMode(m){
+  document.getElementById('form-login').style.display = m==='login' ? 'block' : 'none';
+  document.getElementById('form-register').style.display = m==='register' ? 'block' : 'none';
+  document.getElementById('success-state').style.display = 'none';
+  document.getElementById('tab-login').classList.toggle('on', m==='login');
+  document.getElementById('tab-register').classList.toggle('on', m==='register');
+}
+
+/* ── TOGGLE PASSWORD VISIBILITY ── */
+function togglePw(id, btn){
+  const inp = document.getElementById(id);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.querySelector('svg').innerHTML = show
+    ? '<path d="M2 2l14 14M8.5 4.4A6 6 0 0 1 9 4c5 0 8 5 8 5s-1.1 1.9-3 3.4M6.5 6.5A6 6 0 0 0 1 9s3 5 8 5a6 6 0 0 0 4-1.5"/><line x1="1" y1="1" x2="17" y2="17"/>'
+    : '<path d="M1 9s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z"/><circle cx="9" cy="9" r="2.5"/>';
+}
+
+/* ── PASSWORD STRENGTH ── */
+function checkStrength(pw){
+  const bars = [document.getElementById('pb1'),document.getElementById('pb2'),document.getElementById('pb3'),document.getElementById('pb4')];
+  const label = document.getElementById('pw-label');
+  bars.forEach(b=>b.className='pw-bar');
+  if(!pw){label.textContent='Enter a password';return}
+  let score = 0;
+  if(pw.length >= 8) score++;
+  if(/[A-Z]/.test(pw)) score++;
+  if(/[0-9]/.test(pw)) score++;
+  if(/[^A-Za-z0-9]/.test(pw)) score++;
+  const levels = ['weak','fair','good','strong'];
+  const labels = ['Too weak','Fair','Good','Strong 💪'];
+  for(let i=0;i<score;i++) bars[i].classList.add(levels[score-1]);
+  label.textContent = labels[score-1] || 'Enter a password';
+  label.style.color = score < 2 ? 'var(--live)' : score < 3 ? 'var(--orange)' : score < 4 ? '#EF9F27' : 'var(--accent)';
+}
+
+/* ── SELECT PLAN ── */
+function selectPlan(el){
+  document.querySelectorAll('.ps-card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+
+/* ── TOGGLE CHECKBOX ── */
+function toggleCheck(row){
+  const box = row.querySelector('.check-box');
+  box.classList.toggle('on');
+}
+
+/* ── CLEAR ERROR ── */
+function clearErr(inp){
+  inp.classList.remove('error');
+}
+
+/* ── VALIDATE EMAIL ── */
+function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
+
+/* ── LOGIN HANDLER ── */
+function handleLogin(){
+  const email = document.getElementById('l-email');
+  const pw = document.getElementById('l-password');
+  let ok = true;
+  if(!validEmail(email.value)){email.classList.add('error');ok=false}
+  if(!pw.value){pw.classList.add('error');ok=false}
+  if(!ok){toast('Please fill in all required fields','err');return}
+  // Simulate loading
+  const btn = event.currentTarget;
+  btn.innerHTML='<div class="btn-shimmer"></div><svg viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="6" stroke="rgba(0,0,0,.4)" stroke-width="1.5" fill="none"/><path d="M8 2a6 6 0 0 1 6 6" stroke="var(--bg)" stroke-width="2" fill="none"><animateTransform attributeName="transform" type="rotate" from="0 8 8" to="360 8 8" dur=".7s" repeatCount="indefinite"/></path></svg> Signing in...';
+  btn.disabled=true;
+  setTimeout(()=>{
+    showSuccess('Welcome back!', 'You\'re now signed in. Enjoy watching your favourite channels.');
+  },1600);
+}
+
+/* ── REGISTER HANDLER ── */
+function handleRegister(){
+  const fname = document.getElementById('r-fname');
+  const email = document.getElementById('r-email');
+  const pw = document.getElementById('r-password');
+  const terms = document.getElementById('terms-check').querySelector('.check-box');
+  let ok = true;
+  if(!fname.value.trim()){fname.classList.add('error');ok=false}
+  if(!validEmail(email.value)){email.classList.add('error');ok=false}
+  if(pw.value.length < 6){pw.classList.add('error');ok=false}
+  if(!terms.classList.contains('on')){toast('Please accept the Terms of Service','err');return}
+  if(!ok){toast('Please fill in all required fields','err');return}
+  const btn = event.currentTarget;
+  btn.innerHTML='<div class="btn-shimmer"></div><svg viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="6" stroke="rgba(0,0,0,.25)" stroke-width="1.5" fill="none"/><path d="M8 2a6 6 0 0 1 6 6" stroke="var(--bg)" stroke-width="2" fill="none"><animateTransform attributeName="transform" type="rotate" from="0 8 8" to="360 8 8" dur=".7s" repeatCount="indefinite"/></path></svg> Creating your account...';
+  btn.disabled=true;
+  setTimeout(()=>{
+    showSuccess('Welcome to Cyber Hunter TV!', `Hi ${fname.value}! Your account is ready. Enjoy your 7-day free trial — 450+ channels are waiting.`);
+  }, 2000);
+}
+
+/* ── SUCCESS STATE ── */
+function showSuccess(title, msg){
+  document.getElementById('form-login').style.display='none';
+  document.getElementById('form-register').style.display='none';
+  const s = document.getElementById('success-state');
+  document.getElementById('success-title').textContent=title;
+  document.getElementById('success-sub').textContent=msg;
+  s.style.display='block';
+  toast(title,'ok');
+}
+
+/* ── FORGOT PASSWORD ── */
+function showForgot(){
+  toast('Password reset link sent to your email','ok');
+}
+
+/* ── TOAST ── */
+let toastTimer;
+function toast(msg, type='ok'){
+  const t=document.getElementById('toast');
+  const icon=document.getElementById('toast-icon');
+  const txt=document.getElementById('toast-msg');
+  t.className='show t-'+type;
+  txt.textContent=msg;
+  icon.innerHTML = type==='ok'
+    ? '<path d="M2 8l4 4L14 3" stroke="currentColor" stroke-width="2" fill="none"/>'
+    : '<path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="2" fill="none"/>';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.className=''},2600);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Hunter TV — Settings & Subscription</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090F;--surface:#0D1017;--card:#111622;--card2:#141926;
+  --border:#1C2238;--border2:#242C44;
+  --accent:#00D4AA;--orange:#FF5722;--purple:#6C47FF;
+  --live:#FF3355;--text:#E8EBF5;--muted:#5A6282;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:12px;padding:0 22px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:none;transition:color .15s;flex-shrink:0}
+.back-btn:hover{color:var(--accent)}
+.back-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.logo-text{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;letter-spacing:2px;color:var(--accent)}
+.topbar-r{display:flex;align-items:center;gap:10px;margin-left:auto}
+.ava{width:32px;height:32px;border-radius:50%;border:2px solid var(--accent);overflow:hidden;cursor:pointer}
+.ava img{width:100%;height:100%;object-fit:cover}
+.tbtn{width:34px;height:34px;background:var(--card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s}
+.tbtn:hover{border-color:var(--accent)}
+.tbtn svg{width:15px;height:15px;fill:var(--muted)}
+
+/* PAGE LAYOUT */
+.page{display:flex;min-height:calc(100vh - 56px)}
+
+/* SIDEBAR NAV */
+.snav{width:230px;background:var(--surface);border-right:1px solid var(--border);padding:22px 0;flex-shrink:0;position:sticky;top:56px;align-self:flex-start;height:calc(100vh - 56px);overflow-y:auto}
+.sn-section{margin-bottom:6px}
+.sn-label{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);padding:10px 20px 5px}
+.sn-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;border-left:3px solid transparent;font-size:13px;color:var(--muted);transition:all .15s}
+.sn-item svg{width:15px;height:15px;fill:var(--muted);flex-shrink:0;transition:fill .15s}
+.sn-item:hover{background:rgba(0,212,170,.05);color:var(--text)}
+.sn-item:hover svg{fill:var(--text)}
+.sn-item.on{background:rgba(0,212,170,.09);color:var(--accent);border-left-color:var(--accent)}
+.sn-item.on svg{fill:var(--accent)}
+.sn-div{height:1px;background:var(--border);margin:10px 0}
+
+/* MAIN CONTENT */
+.main{flex:1;padding:28px 32px;max-width:900px;min-width:0}
+
+/* PROFILE CARD */
+.profile-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:28px;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden}
+.profile-card::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(0,212,170,.08) 0%,transparent 70%)}
+.profile-card::after{content:'';position:absolute;bottom:-40px;left:160px;width:160px;height:160px;background:radial-gradient(circle,rgba(108,71,255,.07) 0%,transparent 70%)}
+.profile-ava{width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid var(--accent);flex-shrink:0;position:relative}
+.profile-ava img{width:100%;height:100%;object-fit:cover}
+.profile-ava-edit{position:absolute;inset:0;background:rgba(0,0,0,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;cursor:pointer}
+.profile-ava:hover .profile-ava-edit{opacity:1}
+.profile-ava-edit svg{width:16px;height:16px;stroke:#fff;fill:none}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:18px;font-weight:600;margin-bottom:3px}
+.profile-email{font-size:13px;color:var(--muted);margin-bottom:8px}
+.profile-badges{display:flex;gap:7px;flex-wrap:wrap}
+.pb{font-size:10px;font-weight:700;padding:4px 10px;border-radius:14px;letter-spacing:.3px}
+.pb-plan{background:rgba(0,212,170,.12);color:var(--accent);border:1px solid rgba(0,212,170,.25)}
+.pb-since{background:rgba(108,71,255,.12);color:var(--purple);border:1px solid rgba(108,71,255,.25)}
+.pb-ver{background:rgba(0,212,170,.08);color:var(--muted);border:1px solid var(--border)}
+.profile-actions{display:flex;gap:8px;flex-wrap:wrap}
+.edit-profile-btn{background:var(--card2);border:1px solid var(--border2);color:var(--text);padding:9px 16px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;display:flex;align-items:center;gap:6px}
+.edit-profile-btn:hover{border-color:var(--accent);color:var(--accent)}
+.edit-profile-btn svg{width:13px;height:13px;stroke:currentColor;fill:none}
+
+/* SECTION CARD */
+.settings-section{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden}
+.ss-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.ss-title-wrap{display:flex;align-items:center;gap:10px}
+.ss-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ss-icon svg{width:17px;height:17px;fill:none;stroke:currentColor}
+.ic-green{background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.2);color:var(--accent)}
+.ic-purple{background:rgba(108,71,255,.1);border:1px solid rgba(108,71,255,.2);color:var(--purple)}
+.ic-orange{background:rgba(255,87,34,.1);border:1px solid rgba(255,87,34,.2);color:var(--orange)}
+.ic-blue{background:rgba(55,138,221,.1);border:1px solid rgba(55,138,221,.2);color:#378ADD}
+.ic-red{background:rgba(255,51,85,.1);border:1px solid rgba(255,51,85,.2);color:var(--live)}
+.ss-title{font-size:14px;font-weight:600}
+.ss-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.ss-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;background:rgba(0,212,170,.12);color:var(--accent);border:1px solid rgba(0,212,170,.2)}
+
+/* SETTING ROWS */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);gap:16px;transition:background .15s}
+.setting-row:last-child{border-bottom:none}
+.setting-row:hover{background:rgba(255,255,255,.018)}
+.sr-left{flex:1;min-width:0}
+.sr-label{font-size:13px;font-weight:500;margin-bottom:2px}
+.sr-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.sr-right{flex-shrink:0;display:flex;align-items:center;gap:10px}
+
+/* TOGGLE */
+.toggle{width:44px;height:24px;background:var(--border2);border-radius:12px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.toggle.on::after{transform:translateX(20px)}
+
+/* SELECT */
+.s-select{background:var(--card2);border:1px solid var(--border2);color:var(--text);font-size:12px;padding:7px 12px;border-radius:7px;outline:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .15s;min-width:130px}
+.s-select:focus{border-color:var(--accent)}
+
+/* INPUT */
+.s-input{background:var(--card2);border:1px solid var(--border2);color:var(--text);font-size:13px;padding:8px 12px;border-radius:7px;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .15s;min-width:200px}
+.s-input:focus{border-color:var(--accent)}
+.s-input::placeholder{color:var(--muted)}
+
+/* SLIDER */
+.s-slider{-webkit-appearance:none;width:120px;height:4px;border-radius:2px;background:var(--border2);outline:none;cursor:pointer}
+.s-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.s-slider-val{font-size:12px;color:var(--accent);font-weight:600;min-width:30px;text-align:right}
+
+/* PLAN CARDS */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:20px 22px}
+.plan-card{background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:18px;cursor:pointer;transition:border-color .18s;position:relative}
+.plan-card:hover{border-color:var(--accent)}
+.plan-card.current{border-color:var(--accent);background:rgba(0,212,170,.04)}
+.plan-current-badge{position:absolute;top:-1px;right:14px;background:var(--accent);color:var(--bg);font-size:9px;font-weight:800;padding:3px 9px;border-radius:0 0 6px 6px;letter-spacing:.5px}
+.plan-name{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:5px;color:var(--text)}
+.plan-price{font-size:22px;font-weight:700;color:var(--accent);margin-bottom:2px}
+.plan-price span{font-size:11px;color:var(--muted);font-weight:400}
+.plan-desc{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.plan-features{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.pf{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.pf svg{width:12px;height:12px;flex-shrink:0}
+.pf.yes{color:var(--text)}
+.pf.yes svg{stroke:var(--accent);fill:none}
+.pf.no svg{stroke:var(--muted);fill:none;opacity:.5}
+.plan-btn{width:100%;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:9px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.plan-btn:hover{border-color:var(--accent);color:var(--accent)}
+.plan-card.current .plan-btn{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+
+/* PAYMENT METHODS */
+.payment-item{display:flex;align-items:center;gap:14px;padding:15px 22px;border-bottom:1px solid var(--border);transition:background .15s}
+.payment-item:hover{background:rgba(255,255,255,.018)}
+.payment-item:last-child{border-bottom:none}
+.pm-icon{width:44px;height:28px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pm-icon svg{width:22px;height:14px;fill:var(--muted)}
+.pm-info{flex:1}
+.pm-name{font-size:13px;font-weight:500}
+.pm-num{font-size:11px;color:var(--muted)}
+.pm-default{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(0,212,170,.1);color:var(--accent);border:1px solid rgba(0,212,170,.2)}
+.pm-remove{width:28px;height:28px;background:transparent;border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.pm-remove:hover{border-color:var(--live);background:rgba(255,51,85,.07)}
+.pm-remove svg{width:12px;height:12px;stroke:var(--muted);fill:none;stroke-width:1.8}
+.pm-remove:hover svg{stroke:var(--live)}
+.add-method-btn{display:flex;align-items:center;gap:8px;padding:14px 22px;color:var(--accent);font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s;border-top:1px solid var(--border)}
+.add-method-btn:hover{opacity:.7}
+.add-method-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* CONNECTED DEVICES */
+.device-item{display:flex;align-items:center;gap:14px;padding:15px 22px;border-bottom:1px solid var(--border);transition:background .15s}
+.device-item:last-child{border-bottom:none}
+.device-item:hover{background:rgba(255,255,255,.018)}
+.dev-icon{width:40px;height:40px;background:var(--card2);border:1px solid var(--border2);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dev-icon svg{width:18px;height:18px;stroke:var(--muted);fill:none}
+.dev-info{flex:1}
+.dev-name{font-size:13px;font-weight:500;margin-bottom:2px}
+.dev-meta{font-size:11px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.dev-active{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--accent)}
+.dev-active-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.dev-revoke{font-size:12px;color:var(--muted);cursor:pointer;border:1px solid var(--border);padding:5px 10px;border-radius:6px;transition:all .15s;white-space:nowrap}
+.dev-revoke:hover{border-color:var(--live);color:var(--live)}
+.dev-this{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(0,212,170,.1);color:var(--accent);border:1px solid rgba(0,212,170,.2);white-space:nowrap}
+
+/* DANGER ZONE */
+.danger-row{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);gap:16px}
+.danger-row:last-child{border-bottom:none}
+.dr-label{font-size:13px;font-weight:500;color:var(--live);margin-bottom:2px}
+.dr-desc{font-size:11px;color:var(--muted)}
+.dr-btn{background:transparent;border:1px solid rgba(255,51,85,.3);color:var(--live);padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.dr-btn:hover{background:rgba(255,51,85,.1)}
+
+/* SAVE FOOTER */
+.save-footer{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 -32px}
+.sf-msg{font-size:12px;color:var(--muted)}
+.sf-actions{display:flex;gap:10px}
+.discard-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.discard-btn:hover{border-color:var(--accent);color:var(--text)}
+.save-btn{background:var(--accent);color:var(--bg);padding:9px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:7px;transition:opacity .15s}
+.save-btn:hover{opacity:.85}
+.save-btn svg{width:13px;height:13px;stroke:var(--bg);fill:none;stroke-width:2.5}
+
+@media(max-width:900px){
+  .plans-grid{grid-template-columns:1fr}
+  .snav{display:none}
+  .main{padding:18px}
+  .save-footer{margin:0 -18px;padding:12px 18px}
+}
+@media(max-width:600px){
+  .profile-card{flex-direction:column;text-align:center}
+  .profile-badges{justify-content:center}
+  .profile-actions{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-btn" href="cyber-hunter-tv-v2.html">
+    <svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>
+    Home
+  </a>
+  <span style="color:var(--border)">|</span>
+  <div class="logo-text">CYBER HUNTER TV</div>
+  <div class="topbar-r">
+    <div class="tbtn"><svg viewBox="0 0 18 18"><path d="M9 2a6 6 0 0 1 6 6v2.5l1.5 3h-15l1.5-3V8a6 6 0 0 1 6-6zm-1.5 14h3a1.5 1.5 0 0 1-3 0z" fill="currentColor"/></svg></div>
+    <div class="ava"><img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=68&h=68&fit=crop&crop=face" alt="User"></div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- SIDEBAR NAV -->
+  <nav class="snav">
+    <div class="sn-section">
+      <div class="sn-label">Account</div>
+      <div class="sn-item on" onclick="scrollTo_('#profile')">
+        <svg viewBox="0 0 18 18"><circle cx="9" cy="6" r="4"/><path d="M2 16c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        Profile
+      </div>
+      <div class="sn-item" onclick="scrollTo_('#subscription')">
+        <svg viewBox="0 0 18 18"><rect x="1" y="4" width="16" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 9h8M5 12h4" stroke="currentColor" stroke-width="1.3"/></svg>
+        Subscription
+      </div>
+      <div class="sn-item" onclick="scrollTo_('#payment')">
+        <svg viewBox="0 0 18 18"><rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M2 8h14" stroke="currentColor" stroke-width="1.5"/></svg>
+        Payment Methods
+      </div>
+    </div>
+    <div class="sn-div"></div>
+    <div class="sn-section">
+      <div class="sn-label">Preferences</div>
+      <div class="sn-item" onclick="scrollTo_('#playback')">
+        <svg viewBox="0 0 18 18"><rect x="1" y="2" width="16" height="12" rx="2" fill="currentColor" opacity=".15" stroke="currentColor" stroke-width="1.5"/><path d="M6 7l5 3-5 3V7z" fill="currentColor"/></svg>
+        Playback
+      </div>
+      <div class="sn-item" onclick="scrollTo_('#display')">
+        <svg viewBox="0 0 18 18"><rect x="2" y="2" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M6 16h6M9 12v4" stroke="currentColor" stroke-width="1.5"/></svg>
+        Display & Theme
+      </div>
+      <div class="sn-item" onclick="scrollTo_('#notif')">
+        <svg viewBox="0 0 18 18"><path d="M9 2a6 6 0 0 1 6 6v2.5l1.5 3h-15l1.5-3V8a6 6 0 0 1 6-6zm-1.5 14h3a1.5 1.5 0 0 1-3 0z" fill="currentColor" opacity=".8"/></svg>
+        Notifications
+      </div>
+      <div class="sn-item" onclick="scrollTo_('#language')">
+        <svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 1.5c-2 2-3.5 4.5-3.5 7.5s1.5 5.5 3.5 7.5M9 1.5c2 2 3.5 4.5 3.5 7.5S11 14.5 9 16.5M1.5 9h15" stroke="currentColor" stroke-width="1.3"/></svg>
+        Language & Region
+      </div>
+    </div>
+    <div class="sn-div"></div>
+    <div class="sn-section">
+      <div class="sn-label">System</div>
+      <div class="sn-item" onclick="scrollTo_('#devices')">
+        <svg viewBox="0 0 18 18"><rect x="1" y="2" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M14 6h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-2" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        Connected Devices
+      </div>
+      <div class="sn-item" onclick="scrollTo_('#security')">
+        <svg viewBox="0 0 18 18"><path d="M9 1.5L2 5v5c0 4.4 3 8.4 7 9.5 4-1.1 7-5.1 7-9.5V5l-7-3.5z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M6 9l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        Security & Privacy
+      </div>
+      <div class="sn-item" onclick="scrollTo_('#danger')">
+        <svg viewBox="0 0 18 18"><path d="M9 2l7.5 14H1.5z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 8v4M9 13.5v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Danger Zone
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN SETTINGS -->
+  <div class="main">
+
+    <!-- PROFILE -->
+    <div id="profile" class="profile-card">
+      <div class="profile-ava">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=144&h=144&fit=crop&crop=face" alt="User">
+        <div class="profile-ava-edit"><svg viewBox="0 0 16 16"><path d="M11 2l3 3L5 14H2v-3z"/></svg></div>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">David Kariuki</div>
+        <div class="profile-email">d.kariuki@example.co.tz</div>
+        <div class="profile-badges">
+          <span class="pb pb-plan">Compact Plus</span>
+          <span class="pb pb-since">Member since 2022</span>
+          <span class="pb pb-ver">Verified</span>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <div class="edit-profile-btn"><svg viewBox="0 0 14 14"><path d="M9 2l3 3L4 13H1v-3z"/></svg>Edit Profile</div>
+        <div class="edit-profile-btn"><svg viewBox="0 0 14 14"><rect x="2" y="1" width="10" height="12" rx="1.5"/><path d="M5 5h4M5 8h4M5 11h2" stroke="currentColor" stroke-width="1.2"/></svg>Billing History</div>
+      </div>
+    </div>
+
+    <!-- SUBSCRIPTION PLANS -->
+    <div id="subscription" class="settings-section">
+      <div class="ss-head">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-green"><svg viewBox="0 0 18 18"><rect x="1" y="4" width="16" height="10" rx="2"/><path d="M5 9h8M5 12h4" stroke="white" stroke-width="1.2"/></svg></div>
+          <div>
+            <div class="ss-title">Subscription Plan</div>
+            <div class="ss-sub">Manage your plan and billing cycle</div>
+          </div>
+        </div>
+        <div class="ss-badge">Renews 30 May 2026</div>
+      </div>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-name">Access</div>
+          <div class="plan-price">$5.99 <span>/ month</span></div>
+          <div class="plan-desc">Entry-level package with local channels and basic entertainment.</div>
+          <div class="plan-features">
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> 120+ Channels</div>
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> SD Quality</div>
+            <div class="pf no"><svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6"/></svg> No HD / 4K</div>
+            <div class="pf no"><svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6"/></svg> No Recording</div>
+          </div>
+          <button class="plan-btn">Downgrade</button>
+        </div>
+        <div class="plan-card current">
+          <div class="plan-current-badge">YOUR PLAN</div>
+          <div class="plan-name">Compact Plus</div>
+          <div class="plan-price">$14.99 <span>/ month</span></div>
+          <div class="plan-desc">Popular choice with sports, news and HD channels for the whole family.</div>
+          <div class="plan-features">
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> 250+ Channels</div>
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> HD Quality</div>
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> 500 GB Recording</div>
+            <div class="pf no"><svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6"/></svg> No 4K Channels</div>
+          </div>
+          <button class="plan-btn">Current Plan</button>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">$24.99 <span>/ month</span></div>
+          <div class="plan-desc">Full access to all 450+ channels including 4K, sports, and unlimited recording.</div>
+          <div class="plan-features">
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> 450+ Channels</div>
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> 4K Ultra HD</div>
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> Unlimited Recording</div>
+            <div class="pf yes"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 4"/></svg> 5 Devices Simultaneous</div>
+          </div>
+          <button class="plan-btn">Upgrade</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT METHODS -->
+    <div id="payment" class="settings-section">
+      <div class="ss-head">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-purple"><svg viewBox="0 0 18 18"><rect x="2" y="4" width="14" height="10" rx="2"/><path d="M2 8h14" stroke="white" stroke-width="1.5"/></svg></div>
+          <div>
+            <div class="ss-title">Payment Methods</div>
+            <div class="ss-sub">Manage cards and payment options</div>
+          </div>
+        </div>
+      </div>
+      <div class="payment-item">
+        <div class="pm-icon"><svg viewBox="0 0 24 16" fill="none"><rect x="1" y="1" width="22" height="14" rx="2" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="4" fill="#FF5722" opacity=".7"/><circle cx="14" cy="8" r="4" fill="#FF5722" opacity=".4"/></svg></div>
+        <div class="pm-info"><div class="pm-name">Mastercard •••• 4821</div><div class="pm-num">Expires 08 / 2027</div></div>
+        <div class="pm-default">Default</div>
+        <div class="pm-remove"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8"/></svg></div>
+      </div>
+      <div class="payment-item">
+        <div class="pm-icon"><svg viewBox="0 0 24 16" fill="none"><rect x="1" y="1" width="22" height="14" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M8 11V5h2l2 4 2-4h2v6" stroke="currentColor" stroke-width="1.2"/></svg></div>
+        <div class="pm-info"><div class="pm-name">M-Pesa · +255 712 ••• •••</div><div class="pm-num">Linked mobile money account</div></div>
+        <div class="pm-remove"><svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8"/></svg></div>
+      </div>
+      <div class="add-method-btn">
+        <svg viewBox="0 0 14 14"><path d="M7 1v12M1 7h12"/></svg>
+        Add Payment Method
+      </div>
+    </div>
+
+    <!-- PLAYBACK SETTINGS -->
+    <div id="playback" class="settings-section">
+      <div class="ss-head">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-orange"><svg viewBox="0 0 18 18"><rect x="1" y="2" width="16" height="12" rx="2"/><path d="M6 7l5 3-5 3V7z" fill="white" opacity=".8"/></svg></div>
+          <div>
+            <div class="ss-title">Playback</div>
+            <div class="ss-sub">Video quality, audio and streaming preferences</div>
+          </div>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Default Streaming Quality</div><div class="sr-desc">Set the default quality when watching live TV</div></div>
+        <div class="sr-right"><select class="s-select"><option>Auto (Recommended)</option><option>4K Ultra HD</option><option>Full HD 1080p</option><option selected>HD 720p</option><option>SD 480p</option></select></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Data Saver Mode</div><div class="sr-desc">Reduce video quality to save mobile data usage</div></div>
+        <div class="sr-right"><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Auto-Play Next Channel</div><div class="sr-desc">Automatically play the next channel when current ends</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Hardware Acceleration</div><div class="sr-desc">Use device GPU for smoother HD and 4K playback</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Volume Level</div><div class="sr-desc">Default volume when opening the app</div></div>
+        <div class="sr-right"><input type="range" class="s-slider" id="volSlider" min="0" max="100" value="70" oninput="document.getElementById('volVal').textContent=this.value+'%'"><span class="s-slider-val" id="volVal">70%</span></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Audio Language</div><div class="sr-desc">Preferred audio track language</div></div>
+        <div class="sr-right"><select class="s-select"><option selected>English</option><option>Swahili</option><option>French</option><option>Arabic</option><option>Portuguese</option></select></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Subtitles</div><div class="sr-desc">Show subtitles when available</div></div>
+        <div class="sr-right"><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+    </div>
+
+    <!-- DISPLAY & THEME -->
+    <div id="display" class="settings-section">
+      <div class="ss-head">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-blue"><svg viewBox="0 0 18 18"><rect x="2" y="2" width="14" height="10" rx="2"/><path d="M6 16h6M9 12v4" stroke="white" stroke-width="1.5"/></svg></div>
+          <div>
+            <div class="ss-title">Display & Theme</div>
+            <div class="ss-sub">Appearance and interface customisation</div>
+          </div>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Theme</div><div class="sr-desc">Switch between dark and light interface mode</div></div>
+        <div class="sr-right"><select class="s-select"><option selected>Dark (Default)</option><option>Light</option><option>System Default</option></select></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Accent Colour</div><div class="sr-desc">Primary highlight colour across the app</div></div>
+        <div class="sr-right" style="display:flex;gap:8px;align-items:center">
+          <div onclick="pickAccent(this,'#00D4AA')" style="width:22px;height:22px;border-radius:50%;background:#00D4AA;cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 2px #00D4AA"></div>
+          <div onclick="pickAccent(this,'#6C47FF')" style="width:22px;height:22px;border-radius:50%;background:#6C47FF;cursor:pointer;border:2px solid transparent"></div>
+          <div onclick="pickAccent(this,'#FF5722')" style="width:22px;height:22px;border-radius:50%;background:#FF5722;cursor:pointer;border:2px solid transparent"></div>
+          <div onclick="pickAccent(this,'#378ADD')" style="width:22px;height:22px;border-radius:50%;background:#378ADD;cursor:pointer;border:2px solid transparent"></div>
+          <div onclick="pickAccent(this,'#EF9F27')" style="width:22px;height:22px;border-radius:50%;background:#EF9F27;cursor:pointer;border:2px solid transparent"></div>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Compact Channel Grid</div><div class="sr-desc">Show more channels per row with smaller cards</div></div>
+        <div class="sr-right"><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Show Channel Numbers</div><div class="sr-desc">Display channel numbers on all channel cards</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Animations</div><div class="sr-desc">Enable smooth transitions and hover effects</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div id="notif" class="settings-section">
+      <div class="ss-head">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-purple"><svg viewBox="0 0 18 18"><path d="M9 2a6 6 0 0 1 6 6v2.5l1.5 3h-15l1.5-3V8a6 6 0 0 1 6-6zm-1.5 14h3a1.5 1.5 0 0 1-3 0z" fill="white" opacity=".8"/></svg></div>
+          <div>
+            <div class="ss-title">Notifications</div>
+            <div class="ss-sub">Control what alerts you receive</div>
+          </div>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Push Notifications</div><div class="sr-desc">Allow Cyber Hunter TV to send device notifications</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Programme Reminders</div><div class="sr-desc">Notify me 5 minutes before a saved programme starts</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Live Sports Alerts</div><div class="sr-desc">Get alerts when favourite teams are live</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Recording Complete</div><div class="sr-desc">Notify when a scheduled recording finishes</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Promotional Offers</div><div class="sr-desc">Receive alerts about deals and new channels</div></div>
+        <div class="sr-right"><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Reminder Lead Time</div><div class="sr-desc">How early to be notified before a show</div></div>
+        <div class="sr-right"><select class="s-select"><option>2 minutes</option><option selected>5 minutes</option><option>10 minutes</option><option>15 minutes</option><option>30 minutes</option></select></div>
+      </div>
+    </div>
+
+    <!-- LANGUAGE & REGION -->
+    <div id="language" class="settings-section">
+      <div class="ss-head">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-green"><svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5"/><path d="M9 1.5c-2 2-3.5 4.5-3.5 7.5s1.5 5.5 3.5 7.5M9 1.5c2 2 3.5 4.5 3.5 7.5S11 14.5 9 16.5M1.5 9h15" stroke="white" stroke-width="1.2" fill="none"/></svg></div>
+          <div>
+            <div class="ss-title">Language & Region</div>
+            <div class="ss-sub">Set your location and preferred language</div>
+          </div>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Interface Language</div><div class="sr-desc">Language used throughout the app menus</div></div>
+        <div class="sr-right"><select class="s-select"><option selected>English</option><option>Swahili / Kiswahili</option><option>French / Français</option><option>Arabic / عربي</option></select></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Country / Region</div><div class="sr-desc">Used to show relevant channels and content</div></div>
+        <div class="sr-right"><select class="s-select"><option selected>Tanzania</option><option>Kenya</option><option>Uganda</option><option>Rwanda</option><option>South Africa</option><option>Nigeria</option></select></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Time Zone</div><div class="sr-desc">Affects EPG guide schedule display times</div></div>
+        <div class="sr-right"><select class="s-select"><option selected>EAT (UTC+3)</option><option>SAST (UTC+2)</option><option>WAT (UTC+1)</option><option>GMT (UTC+0)</option></select></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Clock Format</div><div class="sr-desc">12-hour or 24-hour time display</div></div>
+        <div class="sr-right"><select class="s-select"><option selected>24-hour</option><option>12-hour (AM/PM)</option></select></div>
+      </div>
+    </div>
+
+    <!-- CONNECTED DEVICES -->
+    <div id="devices" class="settings-section">
+      <div class="ss-head">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-blue"><svg viewBox="0 0 18 18"><rect x="1" y="2" width="11" height="9" rx="1.5"/><path d="M14 6h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-2" stroke="white" stroke-width="1.3" fill="none"/></svg></div>
+          <div>
+            <div class="ss-title">Connected Devices</div>
+            <div class="ss-sub">3 of 5 device slots used · Compact Plus</div>
+          </div>
+        </div>
+      </div>
+      <div class="device-item">
+        <div class="dev-icon"><svg viewBox="0 0 18 18"><rect x="2" y="3" width="14" height="9" rx="1.5"/><path d="M6 16h6M9 12v4" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="dev-info">
+          <div class="dev-name">HP Laptop — Chrome Browser</div>
+          <div class="dev-meta"><span>Dar es Salaam, Tanzania</span><span>Last seen: Just now</span></div>
+        </div>
+        <div class="dev-active"><div class="dev-active-dot"></div> Active</div>
+        <div class="dev-this">This Device</div>
+      </div>
+      <div class="device-item">
+        <div class="dev-icon"><svg viewBox="0 0 18 18"><rect x="5" y="1" width="8" height="16" rx="2"/><circle cx="9" cy="14" r="1" fill="currentColor"/></svg></div>
+        <div class="dev-info">
+          <div class="dev-name">Samsung Galaxy A54 — Android App</div>
+          <div class="dev-meta"><span>Dar es Salaam, Tanzania</span><span>Last seen: 2 hours ago</span></div>
+        </div>
+        <div class="dev-revoke">Sign Out</div>
+      </div>
+      <div class="device-item">
+        <div class="dev-icon"><svg viewBox="0 0 18 18"><rect x="2" y="4" width="14" height="10" rx="2"/><path d="M7 17h4M9 14v3" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="dev-info">
+          <div class="dev-name">Samsung Smart TV — CHTV App</div>
+          <div class="dev-meta"><span>Living Room</span><span>Last seen: Yesterday 21:30</span></div>
+        </div>
+        <div class="dev-revoke">Sign Out</div>
+      </div>
+    </div>
+
+    <!-- SECURITY & PRIVACY -->
+    <div id="security" class="settings-section">
+      <div class="ss-head">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-green"><svg viewBox="0 0 18 18"><path d="M9 1.5L2 5v5c0 4.4 3 8.4 7 9.5 4-1.1 7-5.1 7-9.5V5l-7-3.5z" fill="none" stroke="white" stroke-width="1.5"/><path d="M6 9l2 2 4-4" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div>
+            <div class="ss-title">Security & Privacy</div>
+            <div class="ss-sub">Password, 2FA and data settings</div>
+          </div>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Two-Factor Authentication</div><div class="sr-desc">Add an extra layer of security to your account login</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Change Password</div><div class="sr-desc">Last changed 3 months ago</div></div>
+        <div class="sr-right"><div class="edit-profile-btn" style="font-size:12px;padding:7px 14px;cursor:pointer"><svg viewBox="0 0 14 14" stroke="currentColor" fill="none" stroke-width="1.5"><rect x="3" y="6" width="8" height="7" rx="1"/><path d="M5 6V4a2 2 0 0 1 4 0v2"/></svg>Change</div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">PIN Protection</div><div class="sr-desc">Require a PIN to access adult and premium content</div></div>
+        <div class="sr-right"><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Watch History</div><div class="sr-desc">Save viewing history for personalised recommendations</div></div>
+        <div class="sr-right"><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="setting-row">
+        <div class="sr-left"><div class="sr-label">Analytics & Data Sharing</div><div class="sr-desc">Help improve the app by sharing anonymous usage data</div></div>
+        <div class="sr-right"><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div id="danger" class="settings-section" style="border-color:rgba(255,51,85,.2)">
+      <div class="ss-head" style="border-bottom-color:rgba(255,51,85,.15)">
+        <div class="ss-title-wrap">
+          <div class="ss-icon ic-red"><svg viewBox="0 0 18 18"><path d="M9 2l7.5 14H1.5z" fill="none" stroke="white" stroke-width="1.5"/><path d="M9 8v4M9 13.5v1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <div>
+            <div class="ss-title" style="color:var(--live)">Danger Zone</div>
+            <div class="ss-sub">Irreversible account actions — proceed with caution</div>
+          </div>
+        </div>
+      </div>
+      <div class="danger-row">
+        <div><div class="dr-label">Clear Watch History</div><div class="dr-desc">Remove all viewing history and personalisation data permanently</div></div>
+        <button class="dr-btn">Clear History</button>
+      </div>
+      <div class="danger-row">
+        <div><div class="dr-label">Cancel Subscription</div><div class="dr-desc">Your access continues until the end of the current billing period</div></div>
+        <button class="dr-btn">Cancel Plan</button>
+      </div>
+      <div class="danger-row">
+        <div><div class="dr-label">Delete Account</div><div class="dr-desc">Permanently delete your account, recordings and all data. This cannot be undone.</div></div>
+        <button class="dr-btn">Delete Account</button>
+      </div>
+    </div>
+
+    <!-- SAVE FOOTER -->
+    <div class="save-footer">
+      <div class="sf-msg">You have unsaved changes</div>
+      <div class="sf-actions">
+        <button class="discard-btn" onclick="showToast('Changes discarded')">Discard</button>
+        <button class="save-btn" onclick="showToast('Settings saved!')">
+          <svg viewBox="0 0 14 14"><path d="M2 7l3 3L12 3"/></svg>
+          Save Changes
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:var(--bg);padding:10px 22px;border-radius:9px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap"></div>
+
+<script>
+function scrollTo_(id){
+  const el=document.querySelector(id);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.sn-item').forEach(n=>n.classList.remove('on'));
+}
+function pickAccent(el,col){
+  document.querySelectorAll('.sr-right [onclick^="pickAccent"]').forEach(d=>d.style.border='2px solid transparent');
+  el.style.border='2px solid #fff';
+  el.style.boxShadow='0 0 0 2px '+col;
+  document.documentElement.style.setProperty('--accent',col);
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.opacity='1';
+  t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)'},2200);
+}
+document.querySelectorAll('.sn-item').forEach(n=>{
+  n.addEventListener('click',()=>{
+    document.querySelectorAll('.sn-item').forEach(x=>x.classList.remove('on'));
+    n.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0A0D14;
+    --surface:#111520;
+    --card:#161C2D;
+    --border:#1E2740;
+    --accent:#00E5C4;
+    --accent2:#FF6B35;
+    --accent3:#7C5CFC;
+    --text:#EEF0F8;
+    --muted:#6B7494;
+    --pill:#1A2235;
+    --live:#FF3B55;
+  }
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+  /* TOPBAR */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+  .logo{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;letter-spacing:2px;color:var(--accent);display:flex;align-items:center;gap:8px}
+  .logo-icon{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center}
+  .logo-icon svg{width:16px;height:16px;fill:var(--bg)}
+  .search-bar{flex:1;max-width:340px;margin:0 20px;position:relative}
+  .search-bar input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 14px 9px 36px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none}
+  .search-bar input::placeholder{color:var(--muted)}
+  .search-bar input:focus{border-color:var(--accent)}
+  .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted)}
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .icon-btn{width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s}
+  .icon-btn:hover{border-color:var(--accent)}
+  .icon-btn svg{width:16px;height:16px;fill:var(--muted)}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer}
+
+  /* LAYOUT */
+  .layout{display:flex;min-height:calc(100vh - 57px)}
+
+  /* SIDEBAR */
+  .sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:20px 0;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
+  .sidebar-label{font-size:10px;font-weight:600;letter-spacing:2px;color:var(--muted);padding:8px 20px 4px;text-transform:uppercase}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;transition:background .15s;border-left:3px solid transparent;font-size:14px;color:var(--muted)}
+  .nav-item svg{width:16px;height:16px;fill:var(--muted);flex-shrink:0}
+  .nav-item:hover{background:rgba(0,229,196,.06);color:var(--text)}
+  .nav-item.active{background:rgba(0,229,196,.08);color:var(--accent);border-left-color:var(--accent)}
+  .nav-item.active svg{fill:var(--accent)}
+  .divider{height:1px;background:var(--border);margin:12px 0}
+  .badge{margin-left:auto;background:var(--live);color:#fff;font-size:10px;padding:2px 6px;border-radius:10px;font-weight:600}
+
+  /* MAIN */
+  .main{flex:1;padding:20px;overflow-y:auto;overflow-x:hidden}
+
+  /* HERO BANNER */
+  .hero{border-radius:14px;background:linear-gradient(120deg,#0B1A3B 0%,#0D2040 40%,#111A35 100%);border:1px solid var(--border);padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(124,92,252,.18) 0%,transparent 70%)}
+  .hero::after{content:'';position:absolute;bottom:-40px;left:200px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,229,196,.1) 0%,transparent 70%)}
+  .hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,85,.15);border:1px solid rgba(255,59,85,.3);color:var(--live);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.5px;margin-bottom:12px}
+  .hero-tag::before{content:'';width:6px;height:6px;background:var(--live);border-radius:50%;animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .hero h2{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;line-height:1.2}
+  .hero p{color:var(--muted);font-size:13px;max-width:400px;line-height:1.6;margin-bottom:20px}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn-primary{background:var(--accent);color:var(--bg);padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+  .btn-primary:hover{opacity:.85}
+  .btn-ghost{background:transparent;color:var(--text);padding:9px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);font-family:'DM Sans',sans-serif;transition:border-color .2s}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .hero-stats{position:absolute;top:28px;right:32px;display:flex;gap:20px}
+  .stat{text-align:center}
+  .stat-num{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;color:var(--accent)}
+  .stat-label{font-size:10px;color:var(--muted);letter-spacing:.5px}
+
+  /* GENRE FILTERS */
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .section-title{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;color:var(--text);text-transform:uppercase}
+  .see-all{font-size:12px;color:var(--accent);cursor:pointer}
+  .genre-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;scrollbar-width:none}
+  .genre-scroll::-webkit-scrollbar{display:none}
+  .genre-pill{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--pill);color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .18s;flex-shrink:0}
+  .genre-pill .g-icon{font-size:14px}
+  .genre-pill:hover{border-color:var(--accent);color:var(--text)}
+  .genre-pill.active{background:rgba(0,229,196,.12);border-color:var(--accent);color:var(--accent)}
+
+  /* CHANNEL GRID */
+  .channel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:32px}
+  .ch-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .18s,border-color .18s}
+  .ch-card:hover{transform:translateY(-3px);border-color:var(--accent3)}
+  .ch-thumb{height:90px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+  .ch-live-dot{position:absolute;top:8px;right:8px;width:8px;height:8px;background:var(--live);border-radius:50%;animation:pulse 1.4s infinite}
+  .ch-hd{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;letter-spacing:.5px}
+  .ch-body{padding:10px 12px 12px}
+  .ch-name{font-size:13px;font-weight:500;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ch-genre{font-size:11px;color:var(--muted)}
+  .ch-num{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--accent3);font-weight:600}
+
+  /* CHANNEL CARD COLORS */
+  .c1{background:linear-gradient(135deg,#1A1035,#2C1854)}
+  .c2{background:linear-gradient(135deg,#0C2035,#103050)}
+  .c3{background:linear-gradient(135deg,#1A0C0C,#361820)}
+  .c4{background:linear-gradient(135deg,#0C1A10,#153020)}
+  .c5{background:linear-gradient(135deg,#1A1200,#332500)}
+  .c6{background:linear-gradient(135deg,#101535,#1C2550)}
+  .c7{background:linear-gradient(135deg,#200C1A,#3A1030)}
+  .c8{background:linear-gradient(135deg,#0A1820,#102535)}
+
+  /* NOW PLAYING BAR */
+  .now-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:16px;z-index:200}
+  .now-thumb{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,#1A1035,#2C1854);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .now-info{flex:1;min-width:0}
+  .now-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .now-ch{font-size:11px;color:var(--muted)}
+  .now-controls{display:flex;align-items:center;gap:10px}
+  .ctrl-btn{width:32px;height:32px;background:var(--card);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .ctrl-btn svg{width:14px;height:14px;fill:var(--text)}
+  .ctrl-play{background:var(--accent);border-color:var(--accent)}
+  .ctrl-play svg{fill:var(--bg)}
+  .volume-row{display:flex;align-items:center;gap:8px;min-width:100px}
+  .volume-row svg{width:14px;height:14px;fill:var(--muted)}
+  .vol-bar{flex:1;height:3px;background:var(--border);border-radius:2px;cursor:pointer;position:relative}
+  .vol-fill{height:100%;background:var(--accent);border-radius:2px;width:65%}
+
+  /* BOTTOM NAV (mobile) */
+  .bottom-nav{display:none;position:fixed;bottom:63px;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 0 8px;z-index:199}
+  .bnav-items{display:flex;justify-content:space-around}
+  .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--muted);font-size:10px}
+  .bnav-item.active{color:var(--accent)}
+  .bnav-item svg{width:20px;height:20px;fill:currentColor}
+
+  /* SECTION ROW */
+  .row-channels{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin-bottom:28px;scrollbar-width:none}
+  .row-channels::-webkit-scrollbar{display:none}
+  .row-card{flex:0 0 130px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .18s,border-color .18s}
+  .row-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .row-thumb{height:75px;display:flex;align-items:center;justify-content:center;font-size:28px}
+  .row-body{padding:8px 10px}
+  .row-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+  .row-tag{font-size:10px;color:var(--muted)}
+
+  /* RESPONSIVE */
+  @media(max-width:768px){
+    .sidebar{display:none}
+    .hero-stats{display:none}
+    .hero{padding:20px}
+    .hero h2{font-size:17px}
+    .search-bar{max-width:none;flex:1}
+    .topbar-right .icon-btn:first-child{display:none}
+    .bottom-nav{display:block}
+    .main{padding:14px 14px 130px}
+    .channel-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+    .logo span{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 16 16"><path d="M2 4h12v1.5L8 9 2 5.5V4zm0 3l6 3.5L14 7v5H2V7z"/></svg>
+    </div>
+    <span>CYBER HUNTER TV</span>
+  </div>
+  <div class="search-bar">
+    <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m15 15-3-3"/></svg>
+    <input type="text" placeholder="Search channels, shows, genres...">
+  </div>
+  <div class="topbar-right">
+    <div class="icon-btn">
+      <svg viewBox="0 0 20 20"><path d="M10 2a6 6 0 0 1 6 6v2l1.5 3h-15L4 10V8a6 6 0 0 1 6-6zm-1.5 14h3a1.5 1.5 0 0 1-3 0z"/></svg>
+    </div>
+    <div class="icon-btn">
+      <svg viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h8"/></svg>
+    </div>
+    <div class="avatar">CH</div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-label">Main</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 20 20"><path d="M3 7l7-5 7 5v10H3z"/></svg>
+      Home
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><rect x="2" y="3" width="16" height="11" rx="1"/><path d="M6 17h8M10 14v3"/></svg>
+      Live TV
+      <span class="badge">LIVE</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+      Guide / EPG
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><path d="M5 3h10l2 3H3L5 3zm-2 4h14v10H3z"/></svg>
+      Recordings
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><path d="M10 2l2.4 4.8L18 8l-4 3.9.9 5.6L10 15l-4.9 2.5.9-5.6L2 8l5.6-.8z"/></svg>
+      Favourites
+    </div>
+    <div class="divider"></div>
+    <div class="sidebar-label">Genres</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><path d="M8 2a6 6 0 0 0 0 12H3v1h14v-1h-5a6 6 0 0 0 0-12z"/></svg>
+      News
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><path d="M4 4h12v8H4zM7 17l3-5 3 5"/></svg>
+      Sports
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><path d="M4 2h12l1 4H3L4 2zm-1 5h14l-1 11H4z"/></svg>
+      Entertainment
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><circle cx="10" cy="9" r="5"/><path d="M10 14v4M6 18h8"/></svg>
+      Kids
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><path d="M3 3h14v14H3z M7 7h2v6H7z M11 7h2v6h-2z"/></svg>
+      Movies
+    </div>
+    <div class="divider"></div>
+    <div class="nav-item">
+      <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 7v3l2 2"/></svg>
+      Settings
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">● NOW LIVE</div>
+      <h2>Premier League<br>Arsenal vs Chelsea</h2>
+      <p>Watch live football action on SuperSport 3 — kick-off underway, 67' second half.</p>
+      <div class="hero-actions">
+        <button class="btn-primary">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 1l9 5-9 5V1z"/></svg>
+          Watch Now
+        </button>
+        <button class="btn-ghost">+ Add to Favourites</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">450+</div><div class="stat-label">Channels</div></div>
+        <div class="stat"><div class="stat-num">80+</div><div class="stat-label">HD Channels</div></div>
+        <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Live Stream</div></div>
+      </div>
+    </div>
+
+    <!-- GENRE FILTERS -->
+    <div class="section-head">
+      <div class="section-title">Browse by Genre</div>
+    </div>
+    <div class="genre-scroll">
+      <div class="genre-pill active"><span class="g-icon">📺</span>All</div>
+      <div class="genre-pill"><span class="g-icon">⚽</span>Sports</div>
+      <div class="genre-pill"><span class="g-icon">📰</span>News</div>
+      <div class="genre-pill"><span class="g-icon">🎬</span>Movies</div>
+      <div class="genre-pill"><span class="g-icon">🎭</span>Entertainment</div>
+      <div class="genre-pill"><span class="g-icon">🧒</span>Kids</div>
+      <div class="genre-pill"><span class="g-icon">🎵</span>Music</div>
+      <div class="genre-pill"><span class="g-icon">🌍</span>Documentary</div>
+      <div class="genre-pill"><span class="g-icon">🍳</span>Lifestyle</div>
+      <div class="genre-pill"><span class="g-icon">💻</span>Tech</div>
+      <div class="genre-pill"><span class="g-icon">🙏</span>Religious</div>
+    </div>
+
+    <!-- LIVE NOW -->
+    <div class="section-head">
+      <div class="section-title">Live Now</div>
+      <div class="see-all">See All →</div>
+    </div>
+    <div class="channel-grid">
+
+      <div class="ch-card">
+        <div class="ch-thumb c1">📡<div class="ch-live-dot"></div><div class="ch-hd">HD</div></div>
+        <div class="ch-body"><div class="ch-num">#101</div><div class="ch-name">SuperSport 3</div><div class="ch-genre">Sports</div></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-thumb c2">🌐<div class="ch-live-dot"></div><div class="ch-hd">HD</div></div>
+        <div class="ch-body"><div class="ch-num">#201</div><div class="ch-name">CNN International</div><div class="ch-genre">News</div></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-thumb c3">🎬<div class="ch-hd">HD</div></div>
+        <div class="ch-body"><div class="ch-num">#301</div><div class="ch-name">M-Net Movies</div><div class="ch-genre">Movies</div></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-thumb c4">🧒<div class="ch-live-dot"></div></div>
+        <div class="ch-body"><div class="ch-num">#401</div><div class="ch-name">Cartoon Network</div><div class="ch-genre">Kids</div></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-thumb c5">🎵</div>
+        <div class="ch-body"><div class="ch-num">#501</div><div class="ch-name">MTV Base</div><div class="ch-genre">Music</div></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-thumb c6">📺<div class="ch-live-dot"></div><div class="ch-hd">HD</div></div>
+        <div class="ch-body"><div class="ch-num">#601</div><div class="ch-name">BBC Earth</div><div class="ch-genre">Documentary</div></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-thumb c7">🎭<div class="ch-hd">HD</div></div>
+        <div class="ch-body"><div class="ch-num">#701</div><div class="ch-name">E! Entertainment</div><div class="ch-genre">Entertainment</div></div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-thumb c8">⚽<div class="ch-live-dot"></div><div class="ch-hd">4K</div></div>
+        <div class="ch-body"><div class="ch-num">#102</div><div class="ch-name">SuperSport 4K</div><div class="ch-genre">Sports</div></div>
+      </div>
+
+    </div>
+
+    <!-- POPULAR CHANNELS ROW -->
+    <div class="section-head">
+      <div class="section-title">Popular Channels</div>
+      <div class="see-all">See All →</div>
+    </div>
+    <div class="row-channels">
+      <div class="row-card"><div class="row-thumb c3">🎬</div><div class="row-body"><div class="row-name">DSTV Movies</div><div class="row-tag">Movies</div></div></div>
+      <div class="row-card"><div class="row-thumb c1">🏀</div><div class="row-body"><div class="row-name">ESPN</div><div class="row-tag">Sports</div></div></div>
+      <div class="row-card"><div class="row-thumb c2">📡</div><div class="row-body"><div class="row-name">Al Jazeera</div><div class="row-tag">News</div></div></div>
+      <div class="row-card"><div class="row-thumb c5">🎧</div><div class="row-body"><div class="row-name">Trace Urban</div><div class="row-tag">Music</div></div></div>
+      <div class="row-card"><div class="row-thumb c4">🧸</div><div class="row-body"><div class="row-name">Disney Jr</div><div class="row-tag">Kids</div></div></div>
+      <div class="row-card"><div class="row-thumb c7">🎭</div><div class="row-body"><div class="row-name">Showmax</div><div class="row-tag">Entertainment</div></div></div>
+      <div class="row-card"><div class="row-thumb c6">🌍</div><div class="row-body"><div class="row-name">National Geo</div><div class="row-tag">Documentary</div></div></div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- NOW PLAYING BAR -->
+<div class="now-bar">
+  <div class="now-thumb">⚽</div>
+  <div class="now-info">
+    <div class="now-title">Arsenal vs Chelsea — Premier League Live</div>
+    <div class="now-ch">SuperSport 3 · HD · Ch 101</div>
+  </div>
+  <div class="now-controls">
+    <div class="ctrl-btn"><svg viewBox="0 0 16 16"><path d="M4 3h2v10H4zm6 0l6 5-6 5V3z"/></svg></div>
+    <div class="ctrl-btn ctrl-play"><svg viewBox="0 0 16 16"><path d="M5 3l8 5-8 5V3z"/></svg></div>
+    <div class="ctrl-btn"><svg viewBox="0 0 16 16"><path d="M10 3h2v10h-2zM2 3l6 5-6 5V3z"/></svg></div>
+  </div>
+  <div class="volume-row">
+    <svg viewBox="0 0 16 16"><path d="M1 6h3l4-3v10l-4-3H1zM11 5a4 4 0 0 1 0 6"/></svg>
+    <div class="vol-bar"><div class="vol-fill"></div></div>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bnav-items">
+    <div class="bnav-item active">
+      <svg viewBox="0 0 20 20"><path d="M3 7l7-5 7 5v10H3z"/></svg>
+      Home
+    </div>
+    <div class="bnav-item">
+      <svg viewBox="0 0 20 20"><rect x="2" y="3" width="16" height="11" rx="1"/><path d="M6 17h8M10 14v3"/></svg>
+      Live
+    </div>
+    <div class="bnav-item">
+      <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+      Guide
+    </div>
+    <div class="bnav-item">
+      <svg viewBox="0 0 20 20"><path d="M10 2l2.4 4.8L18 8l-4 3.9.9 5.6L10 15l-4.9 2.5.9-5.6L2 8l5.6-.8z"/></svg>
+      Favourites
+    </div>
+    <div class="bnav-item">
+      <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 7v3l2 2"/></svg>
+      Settings
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.genre-pill').forEach(p=>{
+    p.addEventListener('click',()=>{
+      document.querySelectorAll('.genre-pill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.addEventListener('click',()=>{
+      document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+      n.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.bnav-item').forEach(n=>{
+    n.addEventListener('click',()=>{
+      document.querySelectorAll('.bnav-item').forEach(x=>x.classList.remove('active'));
+      n.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
