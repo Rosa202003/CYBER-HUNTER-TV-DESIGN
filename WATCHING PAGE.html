@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Hunter TV — Watch</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090F;--surface:#0D1017;--card:#111622;--border:#1C2238;
+  --accent:#00D4AA;--orange:#FF5722;--purple:#6C47FF;
+  --live:#FF3355;--text:#E8EBF5;--muted:#5A6282;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;gap:14px;padding:0 20px;height:54px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;z-index:50}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;cursor:pointer;transition:color .15s;text-decoration:none}
+.back-btn:hover{color:var(--accent)}
+.back-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.logo-text{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;letter-spacing:2px;color:var(--accent)}
+.topbar-center{flex:1;text-align:center}
+.now-playing-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,51,85,.12);border:1px solid rgba(255,51,85,.25);color:var(--live);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+.blink{width:6px;height:6px;background:var(--live);border-radius:50%;animation:blink 1.3s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tbtn{width:34px;height:34px;background:var(--card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s}
+.tbtn:hover{border-color:var(--accent)}
+.tbtn svg{width:15px;height:15px;fill:var(--muted)}
+.tbtn:hover svg{fill:var(--accent)}
+.ava{width:32px;height:32px;border-radius:50%;border:2px solid var(--accent);overflow:hidden;cursor:pointer}
+.ava img{width:100%;height:100%;object-fit:cover}
+
+/* ── MAIN BODY ── */
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ── VIDEO AREA ── */
+.video-col{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.video-container{position:relative;flex:1;background:#000;overflow:hidden;cursor:pointer}
+.video-container img{width:100%;height:100%;object-fit:cover;display:block}
+.video-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.05) 40%,transparent 70%)}
+.video-top-bar{position:absolute;top:0;left:0;right:0;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,transparent 100%)}
+.ch-info-top{display:flex;align-items:center;gap:12px}
+.ch-logo-circle{width:42px;height:42px;border-radius:10px;overflow:hidden;border:2px solid rgba(255,255,255,.2)}
+.ch-logo-circle img{width:100%;height:100%;object-fit:cover}
+.ch-name-top{font-size:14px;font-weight:600;color:#fff}
+.ch-num-top{font-size:11px;color:rgba(255,255,255,.5)}
+.top-tags{display:flex;gap:6px;align-items:center}
+.tag{font-size:9px;font-weight:800;padding:3px 7px;border-radius:4px;letter-spacing:.5px}
+.tag-hd{background:var(--accent);color:var(--bg)}
+.tag-4k{background:#FFB300;color:#000}
+.tag-live{background:var(--live);color:#fff;display:flex;align-items:center;gap:4px}
+.vid-actions-top{display:flex;gap:8px}
+.vid-act-btn{width:34px;height:34px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;backdrop-filter:blur(6px)}
+.vid-act-btn:hover{border-color:var(--accent);background:rgba(0,212,170,.15)}
+.vid-act-btn svg{width:15px;height:15px;fill:#fff}
+
+/* CENTER PLAY */
+.center-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;background:rgba(0,212,170,.88);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity .2s}
+.video-container:hover .center-play{opacity:1}
+.center-play svg{width:24px;height:24px;fill:#000;margin-left:4px}
+
+/* SCRUBBER & CONTROLS */
+.video-bottom{position:absolute;bottom:0;left:0;right:0;padding:0 24px 18px}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.prog-title-v{font-size:15px;font-weight:600;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog-time{font-size:12px;color:rgba(255,255,255,.5);white-space:nowrap}
+.scrubber{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:2px;cursor:pointer;position:relative;margin-bottom:14px}
+.scrub-fill{height:100%;background:var(--accent);border-radius:2px;width:67%;position:relative}
+.scrub-thumb{position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;background:var(--accent);border-radius:50%;border:2px solid #fff}
+.controls-row{display:flex;align-items:center;gap:10px}
+.ctrl{width:36px;height:36px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;backdrop-filter:blur(8px);flex-shrink:0}
+.ctrl:hover{border-color:var(--accent);background:rgba(0,212,170,.18)}
+.ctrl svg{width:15px;height:15px;fill:#fff}
+.ctrl.play{background:var(--accent);border-color:var(--accent)}
+.ctrl.play svg{fill:#000}
+.ctrl.play:hover{background:#00b890}
+.spacer{flex:1}
+.vol-grp{display:flex;align-items:center;gap:8px}
+.vol-grp svg{width:14px;height:14px;fill:rgba(255,255,255,.5)}
+.vol-bar{width:80px;height:3px;background:rgba(255,255,255,.2);border-radius:2px;cursor:pointer}
+.vol-fill{height:100%;background:var(--accent);border-radius:2px;width:70%}
+.qual-select{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:11px;font-weight:700;padding:5px 8px;border-radius:6px;cursor:pointer;backdrop-filter:blur(6px)}
+.ctrl-lbl{font-size:10px;color:rgba(255,255,255,.45);white-space:nowrap}
+
+/* ── INFO PANEL (below video) ── */
+.info-bar{background:var(--surface);border-top:1px solid var(--border);padding:14px 24px;flex-shrink:0}
+.info-row{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.info-left{flex:1;min-width:200px}
+.info-show{font-size:17px;font-weight:600;margin-bottom:3px}
+.info-meta{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.meta-dot{width:3px;height:3px;border-radius:50%;background:var(--muted)}
+.info-right{display:flex;gap:8px;flex-wrap:wrap}
+.act-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:12px;font-weight:500;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .15s}
+.act-pill svg{width:14px;height:14px;fill:var(--muted)}
+.act-pill:hover{border-color:var(--accent);color:var(--accent)}
+.act-pill:hover svg{fill:var(--accent)}
+.act-pill.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.act-pill.primary svg{fill:var(--bg)}
+
+/* ── SIDE PANEL ── */
+.side-panel{width:340px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.side-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.stab{flex:1;padding:13px 8px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.stab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.stab:hover{color:var(--text)}
+.tab-content{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+
+/* UP NEXT */
+.up-next-item{display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.up-next-item:hover{background:rgba(255,255,255,.03)}
+.up-next-item.now-row{background:rgba(0,212,170,.05);border-left:3px solid var(--accent)}
+.un-thumb{width:86px;height:52px;border-radius:7px;overflow:hidden;flex-shrink:0;position:relative}
+.un-thumb img{width:100%;height:100%;object-fit:cover}
+.un-live-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--live);border-radius:50%;animation:blink 1.3s infinite}
+.un-info{flex:1;min-width:0}
+.un-title{font-size:13px;font-weight:500;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-sub{font-size:11px;color:var(--muted);margin-bottom:4px}
+.un-tags{display:flex;gap:5px}
+.un-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
+.un-tag-live{background:rgba(255,51,85,.15);color:var(--live);border:1px solid rgba(255,51,85,.25)}
+.un-tag-hd{background:rgba(0,212,170,.12);color:var(--accent);border:1px solid rgba(0,212,170,.25)}
+.un-tag-time{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.un-add{width:24px;height:24px;flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;align-self:center;transition:all .15s}
+.un-add:hover{border-color:var(--accent);background:rgba(0,212,170,.12)}
+.un-add svg{width:11px;height:11px;stroke:var(--muted);fill:none;stroke-width:2}
+.un-add:hover svg{stroke:var(--accent)}
+.section-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:12px 16px 6px}
+
+/* CHAT / REACTIONS */
+.chat-area{display:flex;flex-direction:column;height:100%}
+.chat-messages{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
+.chat-messages::-webkit-scrollbar{display:none}
+.cmsg{display:flex;gap:9px}
+.cmsg-ava{width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.cmsg-ava img{width:100%;height:100%;object-fit:cover}
+.cmsg-body{flex:1;min-width:0}
+.cmsg-name{font-size:11px;font-weight:600;color:var(--accent);margin-bottom:2px}
+.cmsg-text{font-size:12px;color:var(--text);line-height:1.5}
+.cmsg-time{font-size:10px;color:var(--muted);margin-top:2px}
+.reactions-bar{display:flex;gap:6px;padding:8px 14px;border-top:1px solid var(--border);flex-wrap:wrap}
+.react-btn{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:5px 11px;font-size:13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
+.react-btn:hover{border-color:var(--accent);transform:scale(1.08)}
+.react-count{font-size:11px;font-weight:600;color:var(--muted)}
+.chat-input-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
+.chat-input-row input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;font-family:'DM Sans',sans-serif}
+.chat-input-row input:focus{border-color:var(--accent)}
+.chat-input-row input::placeholder{color:var(--muted)}
+.send-btn{width:34px;height:34px;background:var(--accent);border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.send-btn svg{width:14px;height:14px;fill:var(--bg)}
+
+/* STATS TAB */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.stat-cell{background:var(--surface);padding:16px 14px}
+.stat-label{font-size:10px;color:var(--muted);letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase}
+.stat-val{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:700;color:var(--accent)}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.timeline{padding:14px 16px}
+.tl-item{display:flex;gap:12px;margin-bottom:14px;position:relative}
+.tl-time{font-size:11px;font-weight:700;color:var(--accent);width:32px;flex-shrink:0;padding-top:1px}
+.tl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px;border:2px solid}
+.tl-dot.goal{background:rgba(0,212,170,.2);border-color:var(--accent)}
+.tl-dot.card{background:rgba(255,87,34,.2);border-color:var(--orange)}
+.tl-dot.sub{background:rgba(108,71,255,.2);border-color:var(--purple)}
+.tl-line{position:absolute;left:43px;top:12px;width:1px;height:calc(100% + 5px);background:var(--border)}
+.tl-desc{font-size:12px;color:var(--text);line-height:1.5}
+.tl-player{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .side-panel{display:none}
+  .video-container{min-height:240px}
+}
+@media(max-width:600px){
+  .info-row{flex-direction:column}
+  .vol-grp,.ctrl-lbl,.qual-select{display:none}
+  .video-top-bar .ch-info-top{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="back-btn" href="cyber-hunter-tv-v2.html">
+    <svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>
+    Back
+  </a>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <div class="logo-text">CYBER HUNTER TV</div>
+  <div class="topbar-center">
+    <div class="now-playing-badge"><span class="blink"></span>NOW WATCHING · LIVE</div>
+  </div>
+  <div class="topbar-right">
+    <div class="tbtn">
+      <svg viewBox="0 0 18 18"><path d="M9 2a7 7 0 1 0 0 14A7 7 0 0 0 9 2zM6 9l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+    </div>
+    <div class="tbtn">
+      <svg viewBox="0 0 18 18"><path d="M9 1l2 5.5H17l-5 3.8 1.9 5.7L9 13l-4.9 3 1.9-5.7L1 6.5h6z" fill="currentColor"/></svg>
+    </div>
+    <div class="tbtn">
+      <svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M6 9l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+    </div>
+    <div class="ava"><img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=68&h=68&fit=crop&crop=face" alt="User"></div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="body">
+
+  <!-- VIDEO COLUMN -->
+  <div class="video-col">
+    <div class="video-container" id="vidCon">
+      <img src="https://images.unsplash.com/photo-1551958219-acbc6f5e0a7e?w=1400&h=700&fit=crop" alt="Live football match" id="vidImg">
+
+      <div class="video-overlay"></div>
+
+      <!-- TOP BAR INSIDE VIDEO -->
+      <div class="video-top-bar">
+        <div class="ch-info-top">
+          <div class="ch-logo-circle">
+            <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=80&h=80&fit=crop" alt="Channel logo">
+          </div>
+          <div>
+            <div class="ch-name-top">SuperSport 3</div>
+            <div class="ch-num-top">Channel 101</div>
+          </div>
+        </div>
+        <div class="top-tags">
+          <span class="tag tag-hd">HD</span>
+          <span class="tag tag-live"><span class="blink"></span>LIVE</span>
+        </div>
+        <div class="vid-actions-top">
+          <div class="vid-act-btn" title="Picture in Picture">
+            <svg viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="2" stroke="white" stroke-width="1.4" fill="none"/><rect x="8" y="8" width="6" height="5" rx="1" fill="white" opacity=".8"/></svg>
+          </div>
+          <div class="vid-act-btn" title="Share">
+            <svg viewBox="0 0 16 16"><circle cx="12" cy="3" r="2"/><circle cx="12" cy="13" r="2"/><circle cx="4" cy="8" r="2"/><path d="M6 7l4.5-2.8M6 9l4.5 2.8" stroke="white" stroke-width="1.2" fill="none"/></svg>
+          </div>
+          <div class="vid-act-btn" title="Cast to TV">
+            <svg viewBox="0 0 16 16"><path d="M1 11v2h2a2 2 0 0 0-2-2zm0-3v1.5a4.5 4.5 0 0 1 4.5 4.5H7A6 6 0 0 0 1 8zm0-3v1.5A7.5 7.5 0 0 1 8.5 14H10A9 9 0 0 0 1 5zm13-3H2a1 1 0 0 0-1 1v1.2A10.5 10.5 0 0 1 11.8 15H14a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z" fill="white" opacity=".85"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER PLAY BUTTON -->
+      <div class="center-play" onclick="togglePlay()">
+        <svg id="centerPlayIcon" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8V4z"/></svg>
+      </div>
+
+      <!-- BOTTOM CONTROLS -->
+      <div class="video-bottom">
+        <div class="prog-row">
+          <div class="prog-title-v">Premier League — Arsenal vs Chelsea</div>
+          <div class="prog-time">67' · ends at 20:00</div>
+        </div>
+        <div class="scrubber" id="scrubber" onclick="scrub(event,this)">
+          <div class="scrub-fill" id="scrubFill">
+            <div class="scrub-thumb"></div>
+          </div>
+        </div>
+        <div class="controls-row">
+          <div class="ctrl" title="Previous channel">
+            <svg viewBox="0 0 16 16"><path d="M4 3h2v10H4zm6 0l6 5-6 5V3z"/></svg>
+          </div>
+          <div class="ctrl" title="Rewind 10s">
+            <svg viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 5 5H11a3 3 0 1 1-3-3V3z"/><path d="M5 1l3 3-3 3" stroke="white" stroke-width="1.2" fill="none"/><text x="7.5" y="11" fill="white" font-size="5" text-anchor="middle" font-family="sans-serif">10</text></svg>
+          </div>
+          <div class="ctrl play" id="playBtn" onclick="togglePlay()" title="Play / Pause">
+            <svg id="playIcon" viewBox="0 0 16 16"><path d="M5 3l8 5-8 5V3z"/></svg>
+          </div>
+          <div class="ctrl" title="Forward 10s">
+            <svg viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 1-5 5H5a3 3 0 1 0 3-3V3z"/><path d="M11 1l-3 3 3 3" stroke="white" stroke-width="1.2" fill="none"/><text x="7.5" y="11" fill="white" font-size="5" text-anchor="middle" font-family="sans-serif">10</text></svg>
+          </div>
+          <div class="ctrl" title="Next channel">
+            <svg viewBox="0 0 16 16"><path d="M10 3h2v10h-2zM2 3l6 5-6 5V3z"/></svg>
+          </div>
+          <span class="ctrl-lbl">67' LIVE</span>
+          <div class="spacer"></div>
+          <div class="vol-grp">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5.5h3l4-3v11l-4-3H1z"/><path d="M11 4a5 5 0 0 1 0 8"/></svg>
+            <div class="vol-bar" onclick="setVol(event,this)"><div class="vol-fill" id="volFill"></div></div>
+          </div>
+          <select class="qual-select" style="background:rgba(0,0,0,.55);color:#fff;outline:none;font-family:'DM Sans',sans-serif">
+            <option>HD 1080p</option>
+            <option>HD 720p</option>
+            <option>SD 480p</option>
+            <option>Auto</option>
+          </select>
+          <div class="ctrl" title="Fullscreen" onclick="toggleFS()">
+            <svg viewBox="0 0 16 16" stroke="white" fill="none" stroke-width="1.6"><path d="M1 5V1h4M11 1h4v4M1 11v4h4M11 15h4v-4"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO BAR BELOW VIDEO -->
+    <div class="info-bar">
+      <div class="info-row">
+        <div class="info-left">
+          <div class="info-show">Premier League — Arsenal vs Chelsea · GW32</div>
+          <div class="info-meta">
+            <span>SuperSport 3 · CH 101</span>
+            <div class="meta-dot"></div>
+            <span>HD · Dolby 5.1</span>
+            <div class="meta-dot"></div>
+            <span>18:00 – 20:00</span>
+            <div class="meta-dot"></div>
+            <span>2h · Live</span>
+          </div>
+        </div>
+        <div class="info-right">
+          <div class="act-pill primary">
+            <svg viewBox="0 0 14 14"><path d="M7 1l1.8 3.6 4 .6-2.9 2.8.7 4L7 10.3l-3.6 1.7.7-4L1.2 5.2l4-.6z" fill="currentColor"/></svg>
+            Add to Favourites
+          </div>
+          <div class="act-pill">
+            <svg viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M4 7h6M7 4v6" stroke="currentColor" stroke-width="1.3"/></svg>
+            Record
+          </div>
+          <div class="act-pill">
+            <svg viewBox="0 0 14 14"><circle cx="10" cy="3" r="1.8"/><circle cx="10" cy="11" r="1.8"/><circle cx="4" cy="7" r="1.8"/><path d="M5.8 6.1l2.5-1.7M5.8 7.9l2.5 1.7" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+            Share
+          </div>
+          <div class="act-pill">
+            <svg viewBox="0 0 14 14"><rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M4 6h6M4 9h4" stroke="currentColor" stroke-width="1.2"/></svg>
+            Show Info
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDE PANEL -->
+  <div class="side-panel">
+    <div class="side-tabs">
+      <div class="stab on" onclick="switchTab('upnext',this)">Up Next</div>
+      <div class="stab" onclick="switchTab('chat',this)">Live Chat</div>
+      <div class="stab" onclick="switchTab('stats',this)">Match Stats</div>
+    </div>
+
+    <!-- UP NEXT -->
+    <div class="tab-content" id="tab-upnext">
+      <div class="section-lbl">Now on SuperSport 3</div>
+      <div class="up-next-item now-row">
+        <div class="un-thumb">
+          <img src="https://images.unsplash.com/photo-1551958219-acbc6f5e0a7e?w=180&h=110&fit=crop" alt="Football">
+          <div class="un-live-dot"></div>
+        </div>
+        <div class="un-info">
+          <div class="un-title">Arsenal vs Chelsea</div>
+          <div class="un-sub">Premier League · GW32</div>
+          <div class="un-tags">
+            <span class="un-tag un-tag-live">LIVE</span>
+            <span class="un-tag un-tag-hd">HD</span>
+            <span class="un-tag un-tag-time">until 20:00</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-lbl">Coming Up</div>
+      <div class="up-next-item">
+        <div class="un-thumb"><img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=180&h=110&fit=crop" alt="LaLiga"></div>
+        <div class="un-info">
+          <div class="un-title">LaLiga Highlights</div>
+          <div class="un-sub">Real Madrid · Atletico</div>
+          <div class="un-tags"><span class="un-tag un-tag-time">20:00 – 21:00</span></div>
+        </div>
+        <div class="un-add"><svg viewBox="0 0 12 12"><path d="M6 1v10M1 6h10"/></svg></div>
+      </div>
+      <div class="up-next-item">
+        <div class="un-thumb"><img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=180&h=110&fit=crop" alt="NBA"></div>
+        <div class="un-info">
+          <div class="un-title">NBA Live: Lakers vs Warriors</div>
+          <div class="un-sub">Western Conference · ESPN</div>
+          <div class="un-tags"><span class="un-tag un-tag-live">LIVE SOON</span><span class="un-tag un-tag-time">21:00</span></div>
+        </div>
+        <div class="un-add"><svg viewBox="0 0 12 12"><path d="M6 1v10M1 6h10"/></svg></div>
+      </div>
+      <div class="up-next-item">
+        <div class="un-thumb"><img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=180&h=110&fit=crop" alt="News"></div>
+        <div class="un-info">
+          <div class="un-title">World News Hour</div>
+          <div class="un-sub">CNN International · CH 201</div>
+          <div class="un-tags"><span class="un-tag un-tag-time">21:00</span><span class="un-tag un-tag-hd">HD</span></div>
+        </div>
+        <div class="un-add"><svg viewBox="0 0 12 12"><path d="M6 1v10M1 6h10"/></svg></div>
+      </div>
+      <div class="up-next-item">
+        <div class="un-thumb"><img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=180&h=110&fit=crop" alt="Movies"></div>
+        <div class="un-info">
+          <div class="un-title">Dune: Part Two</div>
+          <div class="un-sub">M-Net Movies · CH 301</div>
+          <div class="un-tags"><span class="un-tag un-tag-time">21:00</span><span class="un-tag un-tag-hd">4K</span></div>
+        </div>
+        <div class="un-add"><svg viewBox="0 0 12 12"><path d="M6 1v10M1 6h10"/></svg></div>
+      </div>
+      <div class="up-next-item">
+        <div class="un-thumb"><img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=180&h=110&fit=crop" alt="Music"></div>
+        <div class="un-info">
+          <div class="un-title">Afrobeats Friday Night</div>
+          <div class="un-sub">MTV Base · CH 501</div>
+          <div class="un-tags"><span class="un-tag un-tag-live">LIVE</span><span class="un-tag un-tag-time">21:00</span></div>
+        </div>
+        <div class="un-add"><svg viewBox="0 0 12 12"><path d="M6 1v10M1 6h10"/></svg></div>
+      </div>
+    </div>
+
+    <!-- LIVE CHAT -->
+    <div class="tab-content" id="tab-chat" style="display:none;flex-direction:column">
+      <div class="chat-area">
+        <div class="reactions-bar">
+          <div class="react-btn">⚽ <span class="react-count">2.4k</span></div>
+          <div class="react-btn">🔥 <span class="react-count">1.8k</span></div>
+          <div class="react-btn">😮 <span class="react-count">943</span></div>
+          <div class="react-btn">👏 <span class="react-count">621</span></div>
+          <div class="react-btn">❤️ <span class="react-count">412</span></div>
+        </div>
+        <div class="chat-messages" id="chatMsgs">
+          <div class="cmsg">
+            <div class="cmsg-ava"><img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=56&h=56&fit=crop&crop=face" alt="User"></div>
+            <div class="cmsg-body"><div class="cmsg-name">KariukiTZ</div><div class="cmsg-text">Arsenal defending so well today!! Great game 🔥</div><div class="cmsg-time">67:02</div></div>
+          </div>
+          <div class="cmsg">
+            <div class="cmsg-ava"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=56&h=56&fit=crop&crop=face" alt="User"></div>
+            <div class="cmsg-body"><div class="cmsg-name">Zawadi_Dar</div><div class="cmsg-text">Chelsea need to change tactics now before 75 mins</div><div class="cmsg-time">67:14</div></div>
+          </div>
+          <div class="cmsg">
+            <div class="cmsg-ava"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=56&h=56&fit=crop&crop=face" alt="User"></div>
+            <div class="cmsg-body"><div class="cmsg-name">SportsFan_255</div><div class="cmsg-text">VAR check incoming... holding breath 🤞</div><div class="cmsg-time">67:28</div></div>
+          </div>
+          <div class="cmsg">
+            <div class="cmsg-ava"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=56&h=56&fit=crop&crop=face" alt="User"></div>
+            <div class="cmsg-body"><div class="cmsg-name">Nairobi_Goal</div><div class="cmsg-text">This referee needs glasses honestly 😂</div><div class="cmsg-time">67:45</div></div>
+          </div>
+          <div class="cmsg">
+            <div class="cmsg-ava"><img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=56&h=56&fit=crop&crop=face" alt="User"></div>
+            <div class="cmsg-body"><div class="cmsg-name">You</div><div class="cmsg-text">Saka is incredible tonight! Best player on the pitch</div><div class="cmsg-time">67:50</div></div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInp" placeholder="Send a message..." onkeydown="sendMsg(event)">
+          <div class="send-btn" onclick="sendMsgClick()">
+            <svg viewBox="0 0 14 14"><path d="M1 7l12-5.5L7.5 13 6 7.5z" fill="currentColor"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATCH STATS -->
+    <div class="tab-content" id="tab-stats" style="display:none">
+      <div class="stats-grid">
+        <div class="stat-cell"><div class="stat-label">Possession</div><div class="stat-val">58%</div><div class="stat-sub">Arsenal advantage</div></div>
+        <div class="stat-cell"><div class="stat-label">Shots on Target</div><div class="stat-val">7 – 4</div><div class="stat-sub">Arsenal vs Chelsea</div></div>
+        <div class="stat-cell"><div class="stat-label">Score</div><div class="stat-val" style="color:var(--live)">2 – 1</div><div class="stat-sub">67' Second Half</div></div>
+        <div class="stat-cell"><div class="stat-label">Corners</div><div class="stat-val">6 – 3</div><div class="stat-sub">Arsenal vs Chelsea</div></div>
+        <div class="stat-cell"><div class="stat-label">Passes</div><div class="stat-val">423</div><div class="stat-sub">68% completion</div></div>
+        <div class="stat-cell"><div class="stat-label">Fouls</div><div class="stat-val">9 – 11</div><div class="stat-sub">Arsenal vs Chelsea</div></div>
+      </div>
+      <div class="timeline">
+        <div class="section-lbl" style="padding:12px 0 8px">Key Events</div>
+        <div class="tl-item">
+          <div class="tl-time">23'</div>
+          <div class="tl-dot goal"></div>
+          <div class="tl-line"></div>
+          <div><div class="tl-desc">⚽ Goal — Saka (Arsenal)</div><div class="tl-player">Assisted by Havertz · Right foot shot</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">41'</div>
+          <div class="tl-dot card"></div>
+          <div class="tl-line"></div>
+          <div><div class="tl-desc" style="color:var(--orange)">🟨 Yellow Card — Gallagher</div><div class="tl-player">Chelsea · Reckless challenge</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">55'</div>
+          <div class="tl-dot goal"></div>
+          <div class="tl-line"></div>
+          <div><div class="tl-desc">⚽ Goal — Jackson (Chelsea)</div><div class="tl-player">Assisted by Palmer · Header</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">61'</div>
+          <div class="tl-dot sub"></div>
+          <div class="tl-line"></div>
+          <div><div class="tl-desc" style="color:var(--purple)">🔄 Substitution — Arsenal</div><div class="tl-player">Rice ON · Jorginho OFF</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">64'</div>
+          <div class="tl-dot goal"></div>
+          <div><div class="tl-desc">⚽ Goal — Martinelli (Arsenal)</div><div class="tl-player">Assisted by Odegaard · Left foot</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let playing=true;
+function togglePlay(){
+  playing=!playing;
+  const icon=document.getElementById('playIcon');
+  const cIcon=document.getElementById('centerPlayIcon');
+  if(playing){
+    icon.innerHTML='<path d="M5 3l8 5-8 5V3z"/>';
+    cIcon.innerHTML='<path d="M6 4l14 8-14 8V4z"/>';
+  } else {
+    icon.innerHTML='<path d="M4 3h3v10H4zm5 0h3v10H9z"/>';
+    cIcon.innerHTML='<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+  }
+}
+function scrub(e,el){
+  const r=el.getBoundingClientRect();
+  const pct=Math.max(0,Math.min(100,((e.clientX-r.left)/r.width)*100));
+  document.getElementById('scrubFill').style.width=Math.round(pct)+'%';
+}
+function setVol(e,el){
+  const r=el.getBoundingClientRect();
+  const pct=Math.max(0,Math.min(100,((e.clientX-r.left)/r.width)*100));
+  document.getElementById('volFill').style.width=Math.round(pct)+'%';
+}
+function switchTab(id,el){
+  ['upnext','chat','stats'].forEach(t=>{
+    const c=document.getElementById('tab-'+t);
+    if(c)c.style.display='none';
+  });
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+  const target=document.getElementById('tab-'+id);
+  if(target)target.style.display=(id==='chat')?'flex':'block';
+  el.classList.add('on');
+}
+const avatars=[
+  'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=56&h=56&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=56&h=56&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=56&h=56&fit=crop&crop=face',
+];
+const names=['GoalHunter_TZ','SportsFanDar','Mzigo_255','KickOff_KE','FootballNation'];
+function addMsg(text,name,ava){
+  const c=document.getElementById('chatMsgs');
+  const d=document.createElement('div');d.className='cmsg';
+  d.innerHTML=`<div class="cmsg-ava"><img src="${ava||avatars[Math.floor(Math.random()*avatars.length)]}" alt="User"></div><div class="cmsg-body"><div class="cmsg-name">${name||names[Math.floor(Math.random()*names.length)]}</div><div class="cmsg-text">${text}</div><div class="cmsg-time">now</div></div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function sendMsg(e){if(e.key==='Enter')sendMsgClick();}
+function sendMsgClick(){
+  const inp=document.getElementById('chatInp');
+  if(!inp.value.trim())return;
+  addMsg(inp.value,'You','https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=56&h=56&fit=crop&crop=face');
+  inp.value='';
+}
+function toggleFS(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+  else document.exitFullscreen&&document.exitFullscreen();
+}
+document.querySelectorAll('.react-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const s=b.querySelector('.react-count');
+    s.textContent=(parseInt(s.textContent.replace(/[k]/,''))*1000+1).toLocaleString().replace(',','.');
+    b.style.transform='scale(1.25)';setTimeout(()=>b.style.transform='',200);
+  });
+});
+</script>
+</body>
+</html>
